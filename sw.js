@@ -1,22 +1,25 @@
-const CACHE_VERSION = 'lexqcm-pwa-v1.3.5';
+const CACHE_VERSION = 'lexqcm-pwa-v1.3.6';
 const CORE_CACHE = `${CACHE_VERSION}-core`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
-const DESIGN_HREF = './styles-v2.css?v=1.3.5';
-const MOBILE_HREF = './mobile-fix.css?v=1.3.5';
-const READER_CSS = './reader.css?v=1.3.5';
-const READER_JS = './reader.js?v=1.3.5';
-const DESIGN_MARKER = 'data-lexqcm-design="v135"';
-const READER_MARKER = 'data-lexqcm-reader="v135"';
+const DESIGN_HREF = './styles-v2.css?v=1.3.6';
+const MOBILE_HREF = './mobile-fix.css?v=1.3.6';
+const READER_CSS = './reader.css?v=1.3.6';
+const READER_JS = './reader.js?v=1.3.6';
+const MAJEURES_JS = './majeures-public.js?v=1.3.6';
+const DESIGN_MARKER = 'data-lexqcm-design="v136"';
+const READER_MARKER = 'data-lexqcm-reader="v136"';
+const MAJEURES_MARKER = 'data-lexqcm-majeures="v136"';
 
 const CORE = [
   './',
   './index.html',
   './manifest.webmanifest',
   './offline.html',
-  './styles-v2.css?v=1.3.5',
-  './mobile-fix.css?v=1.3.5',
-  './reader.css?v=1.3.5',
-  './reader.js?v=1.3.5',
+  './styles-v2.css?v=1.3.6',
+  './mobile-fix.css?v=1.3.6',
+  './reader.css?v=1.3.6',
+  './reader.js?v=1.3.6',
+  './majeures-public.js?v=1.3.6',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
@@ -58,6 +61,9 @@ async function enhanceHtml(response) {
     if (!html.includes(READER_MARKER)) {
       injection += `<link ${READER_MARKER} rel="stylesheet" href="${READER_CSS}"><script ${READER_MARKER} src="${READER_JS}" defer></script>`;
     }
+    if (!html.includes(MAJEURES_MARKER)) {
+      injection += `<script ${MAJEURES_MARKER} src="${MAJEURES_JS}" defer></script>`;
+    }
     if (injection) {
       html = html.includes('</head>') ? html.replace('</head>', `${injection}</head>`) : `${injection}${html}`;
     }
@@ -78,19 +84,38 @@ async function networkFirstNavigation(request) {
   try {
     const response = await fetch(request, { cache: 'no-store' });
     if (response && response.ok) {
-      const enhanced = await enhanceHtml(response.clone());
+      const type = response.headers.get('content-type') || '';
       const cache = await caches.open(RUNTIME_CACHE);
-      await cache.put(request, enhanced.clone());
-      await cache.put('./index.html', enhanced.clone());
-      return enhanced;
+
+      // Only HTML navigations may replace the canonical application shell.
+      // This prevents an embedded PDF from ever overwriting index.html in the PWA cache.
+      if (type.includes('text/html')) {
+        const enhanced = await enhanceHtml(response.clone());
+        await cache.put(request, enhanced.clone());
+        await cache.put('./index.html', enhanced.clone());
+        return enhanced;
+      }
+
+      await cache.put(request, response.clone());
+      return response;
     }
-    return enhanceHtml(response);
+    return response;
   } catch {
-    const cached = (await caches.match(request, { ignoreSearch: true })) ||
-                   (await caches.match('./index.html')) ||
-                   (await caches.match('./')) ||
-                   (await caches.match('./offline.html'));
-    return enhanceHtml(cached);
+    const cached = await caches.match(request, { ignoreSearch: true });
+    if (cached) return cached;
+
+    const url = new URL(request.url);
+    if (url.pathname.toLowerCase().endsWith('.pdf')) {
+      return new Response('PDF indisponible hors connexion. Ouvre-le une première fois avec Internet.', {
+        status: 503,
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+      });
+    }
+
+    const shell = (await caches.match('./index.html')) ||
+                  (await caches.match('./')) ||
+                  (await caches.match('./offline.html'));
+    return enhanceHtml(shell);
   }
 }
 
@@ -133,7 +158,12 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  if (request.destination === 'script' || url.pathname.endsWith('/reader.js')) {
+  if (request.destination === 'script' || url.pathname.endsWith('/reader.js') || url.pathname.endsWith('/majeures-public.js')) {
+    event.respondWith(networkFirstAsset(request));
+    return;
+  }
+
+  if (url.pathname.toLowerCase().endsWith('.pdf')) {
     event.respondWith(networkFirstAsset(request));
     return;
   }
