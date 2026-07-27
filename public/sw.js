@@ -1,4 +1,4 @@
-const CACHE = 'lexqcm-next-v2-1'
+const CACHE = 'lexqcm-next-v2-2'
 const CORE = ['/offline', '/manifest.webmanifest', '/icon.svg', '/generated/questions.json', '/generated/cases.json', '/generated/meta.json']
 
 self.addEventListener('install', (event) => {
@@ -9,9 +9,17 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys()
-    await Promise.all(keys.filter((key) => key.startsWith('lexqcm-next-') && key !== CACHE).map((key) => caches.delete(key)))
+    await Promise.all(
+      keys
+        .filter((key) => key.startsWith('lexqcm-') && key !== CACHE)
+        .map((key) => caches.delete(key)),
+    )
     await self.clients.claim()
   })())
+})
+
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting()
 })
 
 self.addEventListener('fetch', (event) => {
@@ -36,19 +44,27 @@ self.addEventListener('fetch', (event) => {
 
   if (request.mode === 'navigate') {
     event.respondWith((async () => {
-      const cache = await caches.open(CACHE)
       try {
-        const fresh = await fetch(request)
-        if (fresh.ok) await cache.put(request, fresh.clone())
-        return fresh
+        return await fetch(request, { cache: 'no-store' })
       } catch {
-        return (await caches.match(request)) || (await caches.match('/offline')) || Response.error()
+        return (await caches.match('/offline')) || Response.error()
       }
     })())
     return
   }
 
-  if (['script', 'style', 'image', 'font'].includes(request.destination)) {
+  if (['script', 'style'].includes(request.destination)) {
+    event.respondWith((async () => {
+      try {
+        return await fetch(request, { cache: 'no-store' })
+      } catch {
+        return (await caches.match(request, { ignoreSearch: true })) || Response.error()
+      }
+    })())
+    return
+  }
+
+  if (['image', 'font'].includes(request.destination)) {
     event.respondWith((async () => {
       const cached = await caches.match(request)
       if (cached) return cached
