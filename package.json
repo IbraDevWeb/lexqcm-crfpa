@@ -6,13 +6,13 @@
     "node": ">=22.0.0"
   },
   "scripts": {
-    "predev": "node scripts/import-legacy.mjs",
+    "predev": "node scripts/import-legacy-v2.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/import-legacy.mjs",
+    "prebuild": "node scripts/import-legacy-v2.mjs",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "import:legacy": "node scripts/import-legacy.mjs"
+    "import:legacy": "node scripts/import-legacy-v2.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.3",
