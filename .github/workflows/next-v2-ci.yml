@@ -17,6 +17,12 @@ jobs:
           node-version: 24
       - run: npm install
       - run: npm run import:legacy
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lexqcm-import-meta
+          path: public/generated/meta.json
+          if-no-files-found: warn
       - run: node scripts/validate-import.mjs
       - run: npm run typecheck
       - run: npm run build
