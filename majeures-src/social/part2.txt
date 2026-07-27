@@ -1,0 +1,88 @@
+egard des éléments contradictoirement produits par les deux parties.
+REFS|C. trav., art. L. 3171-2 à L. 3171-4 et L. 3121-28 et s.
+
+FICHE|08
+TITLE|Harcèlement moral et régime probatoire
+QUESTION|Un salarié invoque des agissements répétés dégradant ses conditions de travail.
+MAJOR|Aucun salarié ne doit subir des agissements répétés ayant pour objet ou pour effet une dégradation de ses conditions de travail susceptible de porter atteinte à ses droits ou à sa dignité, d'altérer sa santé ou de compromettre son avenir professionnel. Le salarié présente des éléments de fait laissant supposer l'existence d'un harcèlement. Il appartient alors à l'employeur de démontrer que les agissements sont justifiés par des éléments objectifs étrangers à tout harcèlement. Le juge apprécie les faits dans leur ensemble. Les actes pris en méconnaissance de l'interdiction sont nuls et peuvent engager la responsabilité de l'employeur, tenu d'une obligation de prévention.
+CHECK|Agissements répétés
+CHECK|Dégradation ou risque visé par le texte
+CHECK|Éléments présentés globalement
+CHECK|Justifications objectives
+CHECK|Prévention et réaction de l’employeur
+CONCLUSION|Si les faits laissent présumer un harcèlement et que l’employeur ne les justifie pas objectivement, la violation est caractérisée.
+REFS|C. trav., art. L. 1152-1, L. 1152-2, L. 1152-3 et L. 1154-1.
+
+FICHE|09
+TITLE|Discrimination
+QUESTION|Une décision défavorable serait liée à un motif prohibé.
+MAJOR|Aucun salarié ne peut faire l'objet d'une mesure discriminatoire directe ou indirecte en raison d'un motif prohibé par la loi. Le salarié doit présenter des éléments laissant supposer l'existence d'une discrimination ; il incombe alors à l'employeur de prouver que sa décision est justifiée par des éléments objectifs étrangers à toute discrimination. La comparaison avec d'autres salariés peut constituer un indice mais n'est pas toujours indispensable. La mesure discriminatoire est nulle et ouvre droit à une réparation intégrale du préjudice.
+CHECK|Motif prohibé
+CHECK|Mesure défavorable
+CHECK|Éléments laissant supposer le lien
+CHECK|Justification objective de l’employeur
+CHECK|Conséquences de la nullité
+CONCLUSION|La mesure est nulle si l’employeur ne démontre pas qu’elle repose sur des raisons objectives étrangères au motif prohibé.
+REFS|C. trav., art. L. 1132-1, L. 1132-4 et L. 1134-1.
+
+FICHE|10
+TITLE|Licenciement pour motif personnel
+QUESTION|La cause réelle et sérieuse ou la procédure de licenciement est contestée.
+MAJOR|Tout licenciement pour motif personnel doit être justifié par une cause réelle et sérieuse, c'est-à-dire existante, exacte, objective et suffisamment importante pour rendre nécessaire la rupture. L'employeur convoque le salarié à un entretien préalable, respecte les délais, puis notifie la rupture par une lettre qui énonce les motifs et fixe les limites du litige, sous réserve des mécanismes de précision prévus. Le juge contrôle la réalité et le sérieux des faits, ainsi que leur imputabilité au salarié. Une irrégularité de procédure n'entraîne pas à elle seule l'absence de cause réelle et sérieuse, mais ouvre droit à l'indemnité spécifique.
+CHECK|Faits précis et matériellement vérifiables
+CHECK|Imputabilité
+CHECK|Gravité suffisante
+CHECK|Respect de la procédure
+CHECK|Contenu de la lettre
+CONCLUSION|Le licenciement est injustifié si les faits ne sont pas établis ou ne constituent pas une cause réelle et sérieuse.
+REFS|C. trav., art. L. 1232-1 à L. 1232-6.
+
+FICHE|11
+TITLE|Faute grave
+QUESTION|L’employeur prive le salarié du préavis et de l’indemnité de licenciement.
+MAJOR|La faute grave est celle qui rend impossible le maintien du salarié dans l'entreprise, même pendant la durée limitée du préavis. Il appartient à l'employeur qui l'invoque d'en rapporter la preuve. L'appréciation tient compte de la nature des faits, des fonctions, de l'ancienneté, du contexte et des antécédents disciplinaires. L'employeur doit agir dans un délai restreint après avoir eu une connaissance exacte des faits, sauf nécessité de vérifications. La faute grave prive le salarié des indemnités de préavis et de licenciement, mais non de l'indemnité compensatrice de congés payés.
+CHECK|Matérialité des faits
+CHECK|Impossibilité de maintien
+CHECK|Délai de réaction
+CHECK|Proportionnalité
+CHECK|Éventuelles sanctions antérieures
+CONCLUSION|La faute grave n’est retenue que si la poursuite du contrat est immédiatement impossible ; sinon, la faute peut justifier un licenciement simple ou aucune rupture.
+REFS|C. trav., art. L. 1234-1 et L. 1234-9 ; jurisprudence constante.
+
+FICHE|12
+TITLE|Licenciement pour inaptitude
+QUESTION|Le médecin du travail déclare le salarié inapte et l’employeur envisage la rupture.
+MAJOR|Après un avis d'inaptitude, l'employeur doit rechercher un reclassement approprié aux capacités du salarié, après consultation du comité social et économique lorsque celle-ci est requise, en tenant compte des indications du médecin du travail. La recherche porte sur les emplois disponibles dans l'entreprise et, le cas échéant, dans le groupe permettant la permutation du personnel. L'employeur est dispensé de recherche lorsque l'avis mentionne expressément que tout maintien serait gravement préjudiciable à la santé ou que l'état de santé fait obstacle à tout reclassement. Le licenciement n'est possible qu'en cas d'impossibilité de reclassement, de refus d'une proposition conforme ou de dispense légale.
+CHECK|Origine professionnelle ou non
+CHECK|Formulation exacte de l’avis
+CHECK|Consultation du CSE
+CHECK|Périmètre et sérieux des recherches
+CHECK|Propositions écrites et précises
+CHECK|Délai d’un mois et reprise du salaire
+CONCLUSION|Le licenciement est fondé uniquement si l’employeur justifie d’une recherche loyale et sérieuse ou d’une dispense expresse.
+REFS|C. trav., art. L. 1226-2 et s. et L. 1226-10 et s.
+
+FICHE|13
+TITLE|Rupture conventionnelle individuelle
+QUESTION|La validité d’une rupture conventionnelle homologuée est contestée.
+MAJOR|La rupture conventionnelle est un mode autonome de rupture du CDI reposant sur un consentement libre et éclairé des parties. Elle donne lieu à un ou plusieurs entretiens, à la signature d'une convention fixant notamment l'indemnité spécifique et la date envisagée de rupture, puis à un délai de rétractation. À l'issue de ce délai, la convention est soumise à homologation administrative. Une irrégularité n'entraîne la nullité que si elle a affecté le consentement ou si elle méconnaît une condition substantielle. La convention peut être conclue dans un contexte conflictuel, sous réserve de l'absence de fraude, de violence ou de harcèlement ayant vicié le consentement.
+CHECK|Consentement libre
+CHECK|Entretiens
+CHECK|Indemnité minimale
+CHECK|Délai de rétractation
+CHECK|Homologation
+CHECK|Fraude ou vice du consentement
+CONCLUSION|La convention est valable si le consentement est libre et si les garanties essentielles de la procédure ont été respectées.
+REFS|C. trav., art. L. 1237-11 à L. 1237-16.
+
+FICHE|14
+TITLE|Accident du travail et faute inexcusable
+QUESTION|Un salarié victime d’un accident ou d’une maladie professionnelle recherche une indemnisation complémentaire.
+MAJOR|L'accident du travail est l'accident survenu par le fait ou à l'occasion du travail, quelle qu'en soit la cause. Lorsqu'il survient au temps et au lieu du travail, il bénéficie d'une présomption d'imputabilité. La faute inexcusable de l'employeur est caractérisée lorsqu'il avait ou aurait dû avoir conscience du danger auquel le salarié était exposé et qu'il n'a pas pris les mesures nécessaires pour l'en préserver. Sa reconnaissance ouvre droit à une majoration de rente ou de capital et à l'indemnisation des préjudices complémentaires admis.
+CHECK|Fait accidentel ou maladie
+CHECK|Temps et lieu du travail
+CHECK|Lien avec le travail
+CHECK|Conscience du danger
+CHECK|Mesures de prévention
+CHECK|Préjudices complémentaires
+CONCLUSION|La faute inexcusable est retenue si l’employeur connaissait ou devait connaître le danger et n’a pas pris l
