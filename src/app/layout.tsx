@@ -21,9 +21,30 @@ export const viewport: Viewport = {
   themeColor: '#111827',
 }
 
+const legacyStyleGuard = `
+(() => {
+  const parts = ['styles-v2.css','mobile-fix.css','reader.css'];
+  const clean = () => {
+    document.querySelectorAll('link[rel="stylesheet"]').forEach((link) => {
+      const href = link.getAttribute('href') || '';
+      if (link.hasAttribute('data-lexqcm-design') || link.hasAttribute('data-lexqcm-reader') || parts.some((part) => href.includes(part))) {
+        link.remove();
+      }
+    });
+  };
+  clean();
+  const observer = new MutationObserver(clean);
+  observer.observe(document.head, { childList: true, subtree: true });
+  window.addEventListener('load', () => setTimeout(() => observer.disconnect(), 3000), { once: true });
+})();
+`
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fr">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: legacyStyleGuard }} />
+      </head>
       <body>
         {children}
         <PwaRegister />
