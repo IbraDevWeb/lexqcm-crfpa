@@ -1,0 +1,23 @@
+{
+  "name": "LexQCM CRFPA",
+  "short_name": "LexQCM",
+  "description": "QCM, dossiers progressifs et répétition espacée pour le CRFPA.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4f6fb",
+  "theme_color": "#111827",
+  "lang": "fr-FR",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "Entraînement", "url": "/train" },
+    { "name": "Tableau de bord", "url": "/dashboard" }
+  ]
+}
