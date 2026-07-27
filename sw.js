@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'lexqcm-pwa-v1.3.1';
+const CACHE_VERSION = 'lexqcm-pwa-v1.3.2';
 const CORE_CACHE = `${CACHE_VERSION}-core`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 const CORE = [
@@ -6,6 +6,9 @@ const CORE = [
   './index.html',
   './manifest.webmanifest',
   './offline.html',
+  './styles.css',
+  './styles-v2.css',
+  './app.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
@@ -36,7 +39,6 @@ async function networkFirstNavigation(request) {
     if (response && response.ok) {
       const cache = await caches.open(RUNTIME_CACHE);
       cache.put(request, response.clone());
-      // Maintient aussi une copie canonique utilisable hors ligne malgré les query strings des raccourcis.
       cache.put('./index.html', response.clone());
     }
     return response;
