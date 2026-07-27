@@ -43,6 +43,12 @@ async function readBank(file, assignment) {
   }
 }
 
+function richer(a, b) {
+  const left = Array.isArray(a) ? a : []
+  const right = Array.isArray(b) ? b : []
+  return right.length > left.length ? right : left
+}
+
 function validQuestion(q) {
   return q && typeof q.id === 'string' && typeof q.subject === 'string' && typeof q.topic === 'string' && typeof q.stem === 'string' && Array.isArray(q.options) && q.options.length >= 2 && Array.isArray(q.answers) && q.answers.every((a) => Number.isInteger(a) && a >= 0 && a < q.options.length)
 }
@@ -54,17 +60,22 @@ function validCase(c) {
 async function main() {
   await fs.mkdir(outputDir, { recursive: true })
 
-  let questions = await readBank('data/questions.js', 'window.QUESTION_BANK=')
-  let cases = await readBank('data/cases.js', 'window.CASE_BANK=')
+  const dataQuestions = await readBank('data/questions.js', 'window.QUESTION_BANK=')
+  const dataCases = await readBank('data/cases.js', 'window.CASE_BANK=')
 
-  if (!Array.isArray(questions) || !Array.isArray(cases)) {
+  let htmlQuestions = null
+  let htmlCases = null
+  try {
     const html = await fs.readFile(path.join(root, 'index.html'), 'utf8')
-    questions = Array.isArray(questions) ? questions : extractAssignedJson(html, 'window.QUESTION_BANK=')
-    cases = Array.isArray(cases) ? cases : extractAssignedJson(html, 'window.CASE_BANK=')
-  }
+    htmlQuestions = extractAssignedJson(html, 'window.QUESTION_BANK=')
+    htmlCases = extractAssignedJson(html, 'window.CASE_BANK=')
+  } catch {}
 
-  if (!Array.isArray(questions)) throw new Error('QUESTION_BANK introuvable dans la V1.')
-  if (!Array.isArray(cases)) throw new Error('CASE_BANK introuvable dans la V1.')
+  const questions = richer(dataQuestions, htmlQuestions)
+  const cases = richer(dataCases, htmlCases)
+
+  if (!questions.length) throw new Error('QUESTION_BANK introuvable dans la V1.')
+  if (!cases.length) throw new Error('CASE_BANK introuvable dans la V1.')
 
   const uniqueQuestions = [...new Map(questions.filter((q) => q.active !== false && validQuestion(q)).map((q) => [q.id, q])).values()]
   const uniqueCases = [...new Map(cases.filter(validCase).map((c) => [c.id, c])).values()]
