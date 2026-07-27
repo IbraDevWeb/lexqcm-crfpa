@@ -24,7 +24,7 @@ export async function updateSession(request: NextRequest) {
     },
   })
 
-  const { data: { claims } } = await supabase.auth.getClaims()
+  const { data: claims } = await supabase.auth.getClaims()
   const authenticated = Boolean(claims?.sub)
   const pathname = request.nextUrl.pathname
   const isProtected = protectedPrefixes.some((prefix) => pathname.startsWith(prefix))
