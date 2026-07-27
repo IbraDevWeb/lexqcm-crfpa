@@ -1,25 +1,25 @@
-const CACHE_VERSION = 'lexqcm-pwa-v1.3.6';
+const CACHE_VERSION = 'lexqcm-pwa-v1.3.7';
 const CORE_CACHE = `${CACHE_VERSION}-core`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
-const DESIGN_HREF = './styles-v2.css?v=1.3.6';
-const MOBILE_HREF = './mobile-fix.css?v=1.3.6';
-const READER_CSS = './reader.css?v=1.3.6';
-const READER_JS = './reader.js?v=1.3.6';
-const MAJEURES_JS = './majeures-public.js?v=1.3.6';
-const DESIGN_MARKER = 'data-lexqcm-design="v136"';
-const READER_MARKER = 'data-lexqcm-reader="v136"';
-const MAJEURES_MARKER = 'data-lexqcm-majeures="v136"';
+const DESIGN_HREF = './styles-v2.css?v=1.3.7';
+const MOBILE_HREF = './mobile-fix.css?v=1.3.7';
+const READER_CSS = './reader.css?v=1.3.7';
+const READER_JS = './reader.js?v=1.3.7';
+const MAJEURES_JS = './majeures-public.js?v=1.3.7';
+const DESIGN_MARKER = 'data-lexqcm-design="v137"';
+const READER_MARKER = 'data-lexqcm-reader="v137"';
+const MAJEURES_MARKER = 'data-lexqcm-majeures="v137"';
 
 const CORE = [
   './',
   './index.html',
   './manifest.webmanifest',
   './offline.html',
-  './styles-v2.css?v=1.3.6',
-  './mobile-fix.css?v=1.3.6',
-  './reader.css?v=1.3.6',
-  './reader.js?v=1.3.6',
-  './majeures-public.js?v=1.3.6',
+  './styles-v2.css?v=1.3.7',
+  './mobile-fix.css?v=1.3.7',
+  './reader.css?v=1.3.7',
+  './reader.js?v=1.3.7',
+  './majeures-public.js?v=1.3.7',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
@@ -87,8 +87,6 @@ async function networkFirstNavigation(request) {
       const type = response.headers.get('content-type') || '';
       const cache = await caches.open(RUNTIME_CACHE);
 
-      // Only HTML navigations may replace the canonical application shell.
-      // This prevents an embedded PDF from ever overwriting index.html in the PWA cache.
       if (type.includes('text/html')) {
         const enhanced = await enhanceHtml(response.clone());
         await cache.put(request, enhanced.clone());
