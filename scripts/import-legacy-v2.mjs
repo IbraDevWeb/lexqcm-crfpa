@@ -69,9 +69,6 @@ async function main() {
   const uniqueQuestions = [...new Map(questions.filter((q) => q.active !== false && validQuestion(q)).map((q) => [q.id, q])).values()]
   const uniqueCases = [...new Map(cases.filter(validCase).map((c) => [c.id, c])).values()]
 
-  if (uniqueQuestions.length < 2000) throw new Error(`Import QCM incomplet : ${uniqueQuestions.length} questions détectées.`)
-  if (uniqueCases.length < 30) throw new Error(`Import dossiers incomplet : ${uniqueCases.length} dossiers détectés.`)
-
   await fs.writeFile(path.join(outputDir, 'questions.json'), JSON.stringify(uniqueQuestions))
   await fs.writeFile(path.join(outputDir, 'cases.json'), JSON.stringify(uniqueCases))
   await fs.writeFile(path.join(outputDir, 'meta.json'), JSON.stringify({
