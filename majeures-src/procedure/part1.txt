@@ -1,0 +1,92 @@
+DOCUMENT|Majeures types - Procédure civile
+SUBTITLE|18 constructions modulaires pour le cas pratique CRFPA
+NOTE|Synthèses originales - édition fondée sur le fascicule 2025
+
+FICHE|01
+TITLE|Intérêt et qualité à agir
+QUESTION|La recevabilité de la demande est contestée faute d’intérêt ou de qualité.
+MAJOR|L'action est ouverte à tous ceux qui ont un intérêt légitime au succès ou au rejet d'une prétention, sous réserve des cas où la loi attribue le droit d'agir aux seules personnes qu'elle qualifie. L'intérêt doit être personnel, direct, né et actuel, sauf actions préventives admises par la loi. La qualité correspond au titre juridique permettant d'agir lorsqu'une action est attitrée. Le défaut d'intérêt ou de qualité constitue une fin de non-recevoir, susceptible d'être proposée en tout état de cause, sous réserve des pouvoirs du juge et d'une éventuelle régularisation avant qu'il statue.
+CHECK|Intérêt personnel, direct et légitime
+CHECK|Intérêt né et actuel
+CHECK|Action banale ou attitrée
+CHECK|Qualité du demandeur et du défendeur
+CHECK|Régularisation possible
+CONCLUSION|À défaut d’intérêt ou de qualité, la demande est irrecevable sans examen au fond.
+REFS|CPC, art. 30, 31, 32 et 122 à 126.
+
+FICHE|02
+TITLE|Compétence matérielle
+QUESTION|Il faut déterminer la juridiction compétente en fonction de la nature ou du montant du litige.
+MAJOR|La compétence d'attribution se détermine d'après la nature de la prétention et les règles spéciales applicables, et non d'après les moyens de défense. Le tribunal judiciaire est la juridiction de droit commun en matière civile, sous réserve des compétences exclusives ou spécialisées attribuées à d'autres juridictions ou chambres. Lorsque la compétence dépend du montant, celui-ci est apprécié selon les prétentions du demandeur, en tenant compte des règles de cumul et des demandes indéterminées. Les règles de compétence d'attribution d'ordre public peuvent être relevées d'office dans les cas prévus.
+CHECK|Nature exacte de la demande
+CHECK|Compétence exclusive ou spéciale
+CHECK|Montant et cumul des prétentions
+CHECK|Demande principale ou incidente
+CHECK|Ordre public
+CONCLUSION|La juridiction matériellement compétente est celle que les textes désignent au regard de l’objet principal de la demande.
+REFS|COJ et CPC, notamment art. 33 et s.
+
+FICHE|03
+TITLE|Compétence territoriale
+QUESTION|Le défendeur conteste le lieu où l’action a été engagée.
+MAJOR|La juridiction territorialement compétente est en principe celle du lieu où demeure le défendeur. S'il existe plusieurs défendeurs, le demandeur peut saisir la juridiction du lieu où demeure l'un d'eux. Des options sont prévues, notamment en matière contractuelle au lieu de la livraison effective ou de l'exécution de la prestation, et en matière délictuelle au lieu du fait dommageable ou du dommage subi. Les règles spéciales et les compétences exclusives doivent être vérifiées. Une clause attributive de compétence territoriale n'est valable que dans les conditions strictes prévues entre commerçants et si elle est spécifiée de façon très apparente.
+CHECK|Domicile du défendeur
+CHECK|Pluralité de défendeurs
+CHECK|Option contractuelle ou délictuelle
+CHECK|Règle spéciale/exclusive
+CHECK|Validité d’une clause attributive
+CONCLUSION|À défaut de règle spéciale ou d’option régulièrement exercée, le demandeur doit saisir le tribunal du domicile du défendeur.
+REFS|CPC, art. 42 à 48.
+
+FICHE|04
+TITLE|Exception d’incompétence
+QUESTION|Une partie veut contester la compétence de la juridiction saisie.
+MAJOR|L'exception d'incompétence est une exception de procédure. Elle doit, à peine d'irrecevabilité, être soulevée simultanément avec les autres exceptions et avant toute défense au fond ou fin de non-recevoir. Son auteur doit la motiver et indiquer la juridiction devant laquelle il demande que l'affaire soit portée. Le juge statue sur la compétence et, selon les cas, renvoie les parties devant la juridiction compétente ou invite à mieux se pourvoir. La décision peut faire l'objet de la voie de recours spécialement organisée.
+CHECK|Moment de l’exception
+CHECK|Simultanéité avec les autres exceptions
+CHECK|Motivation
+CHECK|Désignation de la juridiction compétente
+CHECK|Voie et délai de recours
+CONCLUSION|L’exception est irrecevable si elle est tardive ou ne désigne pas la juridiction prétendument compétente.
+REFS|CPC, art. 73, 74, 75 et 80 et s.
+
+FICHE|05
+TITLE|Nullité pour vice de forme
+QUESTION|Un acte de procédure comporte une irrégularité formelle.
+MAJOR|La nullité pour vice de forme ne peut être prononcée que si un texte la prévoit ou si une formalité substantielle ou d'ordre public a été méconnue. Celui qui l'invoque doit démontrer le grief que lui cause l'irrégularité, même lorsque la formalité est substantielle ou d'ordre public. La nullité doit être soulevée au fur et à mesure de l'accomplissement des actes et avant toute défense au fond ou fin de non-recevoir pour les actes déjà accomplis. Elle est couverte si sa cause a disparu avant que le juge statue et si aucune forclusion n'est intervenue.
+CHECK|Nature formelle du vice
+CHECK|Texte ou formalité substantielle
+CHECK|Grief concret
+CHECK|Moment de l’exception
+CHECK|Régularisation
+CONCLUSION|Sans grief démontré, l’acte ne peut être annulé pour vice de forme.
+REFS|CPC, art. 112 à 116.
+
+FICHE|06
+TITLE|Nullité pour irrégularité de fond
+QUESTION|L’acte est accompli par une personne dépourvue de capacité ou de pouvoir.
+MAJOR|Constituent des irrégularités de fond affectant la validité de l'acte le défaut de capacité d'ester en justice, le défaut de pouvoir d'une partie ou d'une personne figurant au procès comme représentant, et le défaut de capacité ou de pouvoir de celui qui assure la représentation en justice. Ces nullités peuvent être proposées en tout état de cause et n'exigent pas la preuve d'un grief. Elles doivent être accueillies sans que celui qui les invoque ait à justifier d'un préjudice. Elles sont toutefois susceptibles de régularisation lorsque leur cause a disparu avant que le juge statue et qu'aucune forclusion n'est intervenue.
+CHECK|Capacité de la partie
+CHECK|Pouvoir du représentant
+CHECK|Pouvoir du mandataire de justice
+CHECK|Date de régularisation
+CHECK|Forclusion éventuelle
+CONCLUSION|L’acte est nul sans exigence de grief si une irrégularité de fond subsiste au moment où le juge statue.
+REFS|CPC, art. 117 à 121.
+
+FICHE|07
+TITLE|Assignation et saisine du tribunal judiciaire
+QUESTION|Il faut vérifier la validité de l’acte introductif et la saisine effective du tribunal.
+MAJOR|L'assignation est l'acte de commissaire de justice par lequel le demandeur cite son adversaire à comparaître. Elle doit comporter les mentions communes aux actes, les mentions propres à l'assignation, l'objet de la demande, un exposé des moyens en fait et en droit ainsi que les modalités de comparution. La juridiction n'est effectivement saisie que par la remise d'une copie de l'assignation au greffe dans le délai applicable. Le non-respect du délai de placement est sanctionné par la caducité, susceptible d'être rapportée dans les conditions légales si le demandeur justifie d'un motif légitime.
+CHECK|Mentions obligatoires
+CHECK|Date et modalités de comparution
+CHECK|Signification régulière
+CHECK|Délai de placement
+CHECK|Éventuelle caducité et motif légitime
+CONCLUSION|Une assignation valable ne suffit pas : elle doit également être placée au greffe dans le délai requis pour saisir la juridiction.
+REFS|CPC, art. 54, 56, 648, 754 et s.
+
+FICHE|08
+TITLE|Principe de la contradiction
+QUESTION|Une partie soutient ne pas avoir pu discuter un moyen, une pièce ou une mesure.
+MAJOR|Nulle partie ne peut être jugée sans avoir été entendue ou appelée. Les parties doivent se faire connaître en temps utile les moyens de fait, les éléments de preuve et les moyens de droit qu'elles invoquent afin que chacune puisse organiser sa défense. Le juge doit en toutes circonstances faire observer et observer lui-même le principe de la contradiction. Il ne peut retenir un moyen relev
