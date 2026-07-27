@@ -1,0 +1,75 @@
+DOCUMENT|Majeures types - Droit des obligations
+SUBTITLE|18 constructions modulaires pour le cas pratique CRFPA
+NOTE|Synthèses originales - édition fondée sur les fascicules 2025
+
+FICHE|01
+TITLE|Rupture abusive des pourparlers
+QUESTION|Une partie rompt des négociations avancées ou parallèles et l’autre réclame réparation.
+MAJOR|En vertu de l'article 1112 du Code civil, l'initiative, le déroulement et la rupture des négociations précontractuelles sont libres. Cette liberté doit toutefois s'exercer de bonne foi, conformément à l'article 1104. La rupture devient fautive lorsque ses circonstances révèlent une déloyauté, notamment au regard de l'état d'avancement, de la durée des pourparlers, des assurances données ou de la brutalité de la rupture. La responsabilité encourue est extracontractuelle et suppose une faute, un dommage certain et un lien de causalité. La réparation ne peut comprendre ni les avantages attendus du contrat non conclu ni la perte de chance de les obtenir ; elle peut couvrir les dépenses inutilement exposées et les autres préjudices directement causés par la faute.
+CHECK|Existence de simples pourparlers et non d’une offre ferme ou d’un contrat
+CHECK|Caractère fautif des circonstances de la rupture
+CHECK|Dépenses ou préjudices directement imputables à la faute
+CHECK|Exclusion du gain espéré du contrat
+CONCLUSION|Si les circonstances révèlent une rupture déloyale, son auteur engage sa responsabilité extracontractuelle, mais l’indemnisation reste limitée aux préjudices causés par la faute dans la rupture.
+REFS|C. civ., art. 1104, 1112 et 1240 ; Com., 26 nov. 2003, Manoukian.
+
+FICHE|02
+TITLE|Obligation précontractuelle d’information
+QUESTION|Une partie reproche à son cocontractant de ne pas lui avoir révélé une information avant la conclusion.
+MAJOR|Aux termes de l'article 1112-1 du Code civil, la partie qui connaît une information dont l'importance est déterminante pour le consentement de l'autre doit l'en informer lorsque cette dernière l'ignore légitimement ou fait confiance à son cocontractant. L'information doit présenter un lien direct et nécessaire avec le contenu du contrat ou la qualité des parties. Le devoir ne porte pas sur l'estimation de la valeur de la prestation. Celui qui prétend qu'une information lui était due doit établir l'existence de l'obligation ; il appartient ensuite au débiteur de prouver qu'il l'a exécutée. Le manquement engage la responsabilité extracontractuelle et peut entraîner la nullité si les conditions d'un vice du consentement sont réunies.
+CHECK|Information déterminante
+CHECK|Ignorance légitime ou confiance
+CHECK|Lien direct et nécessaire avec le contrat
+CHECK|Preuve de l’exécution
+CHECK|Éventuel vice du consentement distinct
+CONCLUSION|Le manquement ouvre droit à réparation et, si l’omission a provoqué une erreur ou un dol déterminant, peut justifier la nullité du contrat.
+REFS|C. civ., art. 1112-1, 1130 et s., 1240.
+
+FICHE|03
+TITLE|Qualification et rétractation de l’offre
+QUESTION|Il faut déterminer si un document constitue une offre et si sa rétractation a empêché le contrat.
+MAJOR|L'offre est une manifestation de volonté de conclure un contrat à des conditions suffisamment déterminées. Selon l'article 1114 du Code civil, elle doit comprendre les éléments essentiels du contrat envisagé et exprimer la volonté de son auteur d'être lié en cas d'acceptation ; à défaut, il s'agit d'une invitation à négocier. Tant qu'elle n'est pas parvenue à son destinataire, elle peut être librement rétractée. Une fois reçue, elle doit être maintenue pendant le délai fixé ou, à défaut, pendant un délai raisonnable. Sa rétractation fautive empêche la conclusion du contrat mais engage la responsabilité extracontractuelle de l'offrant, sans indemnisation des avantages attendus du contrat.
+CHECK|Précision des éléments essentiels
+CHECK|Fermeté et absence de réserve
+CHECK|Date de réception et éventuel délai de maintien
+CHECK|Acceptation intervenue avant caducité
+CONCLUSION|Si l’acte est une offre reçue et rétractée prématurément, aucun contrat n’est formé, mais l’offrant peut devoir réparer le préjudice causé par sa faute.
+REFS|C. civ., art. 1113 à 1117.
+
+FICHE|04
+TITLE|Acceptation, silence et formation du contrat
+QUESTION|Le destinataire a répondu, gardé le silence ou modifié les termes proposés.
+MAJOR|L'acceptation est la manifestation de volonté de son auteur d'être lié dans les termes de l'offre. Elle doit être pure, simple et non équivoque ; une réponse qui modifie l'offre constitue une offre nouvelle. Le silence ne vaut en principe pas acceptation, sauf lorsque la loi, les usages, les relations d'affaires ou des circonstances particulières lui donnent cette signification. Le contrat est conclu dès que l'acceptation parvient à l'offrant et au lieu où elle est reçue. Les conditions générales ne sont opposables que si elles ont été portées à la connaissance de l'autre partie et acceptées.
+CHECK|Conformité exacte à l’offre
+CHECK|Éventuelle exception au principe du silence
+CHECK|Moment de réception
+CHECK|Communication des conditions générales
+CONCLUSION|Le contrat n’est formé que si une acceptation conforme et non équivoque est parvenue à l’offrant avant la disparition de l’offre.
+REFS|C. civ., art. 1118 à 1121.
+
+FICHE|05
+TITLE|Promesse unilatérale
+QUESTION|Le promettant se rétracte avant la levée de l’option ou contracte avec un tiers.
+MAJOR|La promesse unilatérale est le contrat par lequel le promettant accorde au bénéficiaire le droit d'opter pour la conclusion d'un contrat dont les éléments essentiels sont déjà déterminés. La rétractation du promettant pendant le délai d'option n'empêche pas la formation du contrat promis si le bénéficiaire lève régulièrement l'option. Le contrat conclu avec un tiers qui connaissait l'existence de la promesse est nul. La promesse doit être distinguée de l'offre, qui demeure un acte unilatéral, et de la promesse synallagmatique, dans laquelle les deux parties sont déjà engagées.
+CHECK|Existence d’un contrat de promesse
+CHECK|Éléments essentiels du contrat promis
+CHECK|Levée d’option régulière et dans le délai
+CHECK|Connaissance de la promesse par le tiers
+CONCLUSION|La levée régulière de l’option permet la formation forcée du contrat malgré la rétractation ; le contrat conclu avec un tiers de mauvaise foi peut être annulé.
+REFS|C. civ., art. 1124 ; pour l’ancien droit : Civ. 3e, 23 juin 2021.
+
+FICHE|06
+TITLE|Pacte de préférence
+QUESTION|Le promettant conclut avec un tiers sans proposer prioritairement le contrat au bénéficiaire.
+MAJOR|Le pacte de préférence est le contrat par lequel une partie s'engage à proposer prioritairement à son bénéficiaire de traiter avec lui si elle décide de contracter. Sa violation engage la responsabilité contractuelle du promettant. Lorsque le tiers connaissait l'existence du pacte et l'intention du bénéficiaire de s'en prévaloir, celui-ci peut demander la nullité du contrat conclu avec le tiers ou sa substitution dans ce contrat. À défaut de cette double connaissance, le bénéficiaire ne peut obtenir que des dommages et intérêts contre le promettant.
+CHECK|Existence et contenu du pacte
+CHECK|Décision du promettant de contracter
+CHECK|Violation de la priorité
+CHECK|Double connaissance du tiers
+CONCLUSION|La substitution ou la nullité exige la preuve de la double mauvaise foi du tiers ; sinon, seule une réparation pécuniaire est envisageable.
+REFS|C. civ., art. 1123 ; Ch. mixte, 26 mai 2006.
+
+FICHE|07
+TITLE|Erreur sur les qualités essentielles
+QUESTION|Une partie soutient s’être trompée sur une caractéristique déterminante de la prestation ou de la personne.
+MAJOR|L'erreur est une représentation inexacte de la réalité. Elle constitue un vice du consentement lorsqu'elle porte sur les qualités essentielles de la prestation, ou sur celles de la personne dans un contrat conclu en considération de celle-ci, et lorsqu'elle a été déterminante du consentement. La qualité doit avoir été expressément ou tacitement convenue. L'erreur doit être excusable et ne peut por
