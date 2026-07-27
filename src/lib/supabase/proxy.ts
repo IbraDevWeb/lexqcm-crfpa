@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const protectedPrefixes = ['/dashboard', '/train', '/account']
+const protectedPrefixes = ['/dashboard', '/train', '/cases', '/account']
 const authPrefixes = ['/auth/login', '/auth/sign-up']
 
 export async function updateSession(request: NextRequest) {
@@ -9,9 +9,6 @@ export async function updateSession(request: NextRequest) {
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-
-  // Keep the app deployable before Supabase is configured. Protected pages
-  // will display a setup message rather than crashing the entire deployment.
   if (!url || !key) return response
 
   const supabase = createServerClient(url, key, {
@@ -22,17 +19,12 @@ export async function updateSession(request: NextRequest) {
       setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
         response = NextResponse.next({ request })
-        cookiesToSet.forEach(({ name, value, options }) =>
-          response.cookies.set(name, value, options),
-        )
+        cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options))
       },
     },
   })
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  const { data: { user } } = await supabase.auth.getUser()
   const pathname = request.nextUrl.pathname
   const isProtected = protectedPrefixes.some((prefix) => pathname.startsWith(prefix))
   const isAuthPage = authPrefixes.some((prefix) => pathname.startsWith(prefix))
