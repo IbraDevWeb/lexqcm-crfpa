@@ -1,0 +1,22 @@
+{
+  "version": "V1.2",
+  "classic_questions": 2349,
+  "case_total": 22,
+  "case_ready": 20,
+  "case_pending": 2,
+  "case_steps": 153,
+  "case_qrm": 6,
+  "new_social_ready_cases": 6,
+  "new_social_steps": 37,
+  "issues": [],
+  "ui_checks": [
+    "responsive CSS breakpoints 1180/900/600",
+    "overflow-x protection",
+    "independent desktop scenario scroll",
+    "mobile sidebar backdrop",
+    "focus-visible",
+    "44px mobile controls",
+    "prefers-reduced-motion",
+    "print fallback"
+  ]
+}

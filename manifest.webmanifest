@@ -1,0 +1,9 @@
+{
+  "name": "LexQCM CRFPA V1.2",
+  "short_name": "LexQCM V1.2",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f2eee4",
+  "theme_color": "#171713",
+  "lang": "fr"
+}
