@@ -1,17 +1,22 @@
-const CACHE_VERSION = 'lexqcm-pwa-v1.3.4';
+const CACHE_VERSION = 'lexqcm-pwa-v1.3.5';
 const CORE_CACHE = `${CACHE_VERSION}-core`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
-const DESIGN_HREF = './styles-v2.css?v=1.3.4';
-const MOBILE_HREF = './mobile-fix.css?v=1.3.4';
-const DESIGN_MARKER = 'data-lexqcm-design="v134"';
+const DESIGN_HREF = './styles-v2.css?v=1.3.5';
+const MOBILE_HREF = './mobile-fix.css?v=1.3.5';
+const READER_CSS = './reader.css?v=1.3.5';
+const READER_JS = './reader.js?v=1.3.5';
+const DESIGN_MARKER = 'data-lexqcm-design="v135"';
+const READER_MARKER = 'data-lexqcm-reader="v135"';
 
 const CORE = [
   './',
   './index.html',
   './manifest.webmanifest',
   './offline.html',
-  './styles-v2.css?v=1.3.4',
-  './mobile-fix.css?v=1.3.4',
+  './styles-v2.css?v=1.3.5',
+  './mobile-fix.css?v=1.3.5',
+  './reader.css?v=1.3.5',
+  './reader.js?v=1.3.5',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
@@ -39,18 +44,22 @@ self.addEventListener('message', event => {
   if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
-async function applyDesign(response) {
+async function enhanceHtml(response) {
   if (!response) return response;
   const type = response.headers.get('content-type') || '';
   if (!type.includes('text/html')) return response;
 
   try {
     let html = await response.text();
+    let injection = '';
     if (!html.includes(DESIGN_MARKER)) {
-      const designLinks = `<link ${DESIGN_MARKER} rel="stylesheet" href="${DESIGN_HREF}"><link rel="stylesheet" href="${MOBILE_HREF}">`;
-      html = html.includes('</head>')
-        ? html.replace('</head>', `${designLinks}</head>`)
-        : `${designLinks}${html}`;
+      injection += `<link ${DESIGN_MARKER} rel="stylesheet" href="${DESIGN_HREF}"><link rel="stylesheet" href="${MOBILE_HREF}">`;
+    }
+    if (!html.includes(READER_MARKER)) {
+      injection += `<link ${READER_MARKER} rel="stylesheet" href="${READER_CSS}"><script ${READER_MARKER} src="${READER_JS}" defer></script>`;
+    }
+    if (injection) {
+      html = html.includes('</head>') ? html.replace('</head>', `${injection}</head>`) : `${injection}${html}`;
     }
 
     const headers = new Headers(response.headers);
@@ -69,19 +78,19 @@ async function networkFirstNavigation(request) {
   try {
     const response = await fetch(request, { cache: 'no-store' });
     if (response && response.ok) {
-      const designed = await applyDesign(response.clone());
+      const enhanced = await enhanceHtml(response.clone());
       const cache = await caches.open(RUNTIME_CACHE);
-      await cache.put(request, designed.clone());
-      await cache.put('./index.html', designed.clone());
-      return designed;
+      await cache.put(request, enhanced.clone());
+      await cache.put('./index.html', enhanced.clone());
+      return enhanced;
     }
-    return applyDesign(response);
+    return enhanceHtml(response);
   } catch {
     const cached = (await caches.match(request, { ignoreSearch: true })) ||
                    (await caches.match('./index.html')) ||
                    (await caches.match('./')) ||
                    (await caches.match('./offline.html'));
-    return applyDesign(cached);
+    return enhanceHtml(cached);
   }
 }
 
@@ -119,12 +128,17 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  if (request.destination === 'style' || url.pathname.endsWith('/styles-v2.css') || url.pathname.endsWith('/mobile-fix.css')) {
+  if (request.destination === 'style' || url.pathname.endsWith('/styles-v2.css') || url.pathname.endsWith('/mobile-fix.css') || url.pathname.endsWith('/reader.css')) {
     event.respondWith(networkFirstAsset(request));
     return;
   }
 
-  if (['script', 'image', 'font', 'manifest'].includes(request.destination)) {
+  if (request.destination === 'script' || url.pathname.endsWith('/reader.js')) {
+    event.respondWith(networkFirstAsset(request));
+    return;
+  }
+
+  if (['image', 'font', 'manifest'].includes(request.destination)) {
     event.respondWith(staleWhileRevalidate(request));
     return;
   }
