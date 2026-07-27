@@ -3,6 +3,10 @@ name: Build public majeure PDFs
 on:
   push:
     branches: [main]
+    paths:
+      - 'majeures-src/**'
+      - 'scripts/build_majeures.py'
+      - '.github/workflows/build-majeures.yml'
   workflow_dispatch:
 
 permissions:
