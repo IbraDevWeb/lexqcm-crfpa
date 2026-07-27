@@ -1,0 +1,43 @@
+tion ou indivisibilité
+CHECK|Rectification dans les premières conclusions lorsque permise
+CHECK|Prétentions au dispositif
+CHECK|Dépendance entre chefs
+CONCLUSION|La cour n’est saisie que des chefs régulièrement dévolus et ne peut réformer le jugement au-delà de cette saisine.
+REFS|CPC, art. 542, 562, 901 et 915-2.
+
+FICHE|16
+TITLE|Caducité en procédure d’appel avec représentation obligatoire
+QUESTION|L’appelant ou l’intimé n’a pas conclu ou signifié dans les délais.
+MAJOR|Dans la procédure d'appel avec représentation obligatoire, les parties doivent remettre leurs conclusions au greffe dans les délais impératifs fixés par le Code. Lorsque l'intimé n'a pas constitué avocat, les conclusions de l'appelant doivent également lui être signifiées dans le délai prévu. Le non-respect expose l'appelant à la caducité de la déclaration d'appel et l'intimé à l'irrecevabilité de ses conclusions. Les conclusions doivent déterminer l'objet du litige, formuler les prétentions dans leur dispositif et respecter les exigences de concentration. Les sanctions sont prononcées par le conseiller de la mise en état, sous réserve du déféré.
+CHECK|Procédure avec représentation obligatoire
+CHECK|Point de départ du délai
+CHECK|Date de remise au greffe
+CHECK|Constitution de l’intimé
+CHECK|Date de signification
+CHECK|Force majeure éventuelle
+CONCLUSION|Le dépassement du délai impératif entraîne la sanction procédurale prévue, sauf cause admise par les textes.
+REFS|CPC, art. 908 à 911, 914 et 916.
+
+FICHE|17
+TITLE|Procédure orale et comparution
+QUESTION|Une partie a envoyé des écritures mais ne comparaît pas à l’audience.
+MAJOR|Dans la procédure orale, les parties présentent en principe oralement leurs prétentions et moyens à l'audience. Les écritures déposées ou adressées ne dispensent pas de comparaître, sauf texte ou décision organisant les échanges sans présence à l'audience. Une partie peut se référer à ses écritures lors de la comparution ; la date des prétentions et moyens est alors celle de leur présentation orale, sous réserve des dispositions particulières. L'absence de comparution peut conduire à ce que la partie soit considérée comme non comparante et à ce que ses demandes écrites ne soient pas examinées.
+CHECK|Nature orale de la procédure
+CHECK|Dispense de comparution
+CHECK|Référence aux écritures
+CHECK|Représentation possible
+CHECK|Conséquence de l’absence
+CONCLUSION|Des conclusions écrites ne remplacent pas la comparution lorsque la procédure demeure orale et qu’aucune dispense n’a été accordée.
+REFS|CPC, art. 446-1 et s.
+
+FICHE|18
+TITLE|Clause ou tentative préalable de règlement amiable
+QUESTION|Une partie saisit le juge sans avoir respecté une clause de conciliation ou une obligation préalable.
+MAJOR|La clause instituant une procédure de conciliation préalable obligatoire constitue, lorsqu'elle est suffisamment précise, une fin de non-recevoir qui s'impose au juge si elle est invoquée. La demande est irrecevable tant que la procédure convenue n'a pas été mise en œuvre, sauf urgence, impossibilité ou autre exception prévue. Par ailleurs, la loi impose dans certains litiges une tentative préalable de conciliation, médiation ou procédure participative avant la saisine. Cette irrecevabilité peut être régularisée si la tentative est accomplie avant que le juge statue, selon le régime applicable.
+CHECK|Existence et précision de la clause
+CHECK|Champ matériel
+CHECK|Démarches réellement accomplies
+CHECK|Exception légale
+CHECK|Possibilité de régularisation
+CONCLUSION|À défaut de tentative préalable obligatoire, la demande est irrecevable tant que cette exigence n’a pas été régulièrement satisfaite.
+REFS|CPC, art. 122, 750-1 et jurisprudence sur les clauses de conciliation préalable.
