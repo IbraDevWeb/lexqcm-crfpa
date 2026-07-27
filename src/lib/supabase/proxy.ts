@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const protectedPrefixes = ['/dashboard', '/train', '/cases', '/account']
+const protectedPrefixes = ['/dashboard', '/train', '/cases', '/errors', '/stats', '/bank', '/updates', '/pdf', '/majeures', '/quality', '/data', '/account']
 const authPrefixes = ['/auth/login', '/auth/sign-up']
 
 export async function updateSession(request: NextRequest) {
@@ -24,9 +24,6 @@ export async function updateSession(request: NextRequest) {
     },
   })
 
-  // getUser() performs a server-side Auth request and returns a fresh,
-  // validated user record. This is safe for authorization checks and
-  // avoids trusting an unverified cookie session.
   const { data: { user } } = await supabase.auth.getUser()
   const pathname = request.nextUrl.pathname
   const isProtected = protectedPrefixes.some((prefix) => pathname.startsWith(prefix))
