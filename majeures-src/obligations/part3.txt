@@ -1,0 +1,57 @@
+ en principe être prouvés par écrit sous signature privée ou authentique. Il peut être dérogé à cette exigence en cas d'impossibilité matérielle ou morale de se procurer un écrit, de perte par force majeure, d'usage de ne pas établir d'écrit, ou lorsqu'existe un commencement de preuve par écrit complété par un autre moyen. Les faits juridiques se prouvent par tout moyen.
+CHECK|Acte ou fait juridique
+CHECK|Montant de l’acte
+CHECK|Existence et qualité de l’écrit
+CHECK|Exception à la preuve littérale
+CHECK|Éléments complémentaires
+CONCLUSION|À défaut d’écrit requis ou d’une exception, la preuve de l’acte juridique ne peut être valablement rapportée par de simples témoignages ou présomptions.
+REFS|C. civ., art. 1353, 1358, 1359, 1360 à 1362.
+
+FICHE|15
+TITLE|Responsabilité du fait des choses
+QUESTION|Une chose a participé à la réalisation du dommage et la victime agit contre son gardien.
+MAJOR|La responsabilité du fait des choses, fondée sur l'article 1242, alinéa 1er, suppose une chose, un dommage, le rôle causal de la chose et la garde. La garde appartient à celui qui exerce sur la chose les pouvoirs d'usage, de direction et de contrôle ; le propriétaire est présumé gardien mais peut démontrer un transfert. Lorsque la chose était en mouvement et est entrée en contact avec le siège du dommage, son rôle actif est présumé. Pour une chose inerte ou sans contact, la victime doit établir son anormalité ou son intervention causale. Le gardien ne s'exonère totalement que par une cause étrangère présentant les caractères de la force majeure ; la faute de la victime peut conduire à une exonération partielle.
+CHECK|Identification de la chose
+CHECK|Rôle actif selon mouvement/contact
+CHECK|Gardien au moment du dommage
+CHECK|Cause étrangère ou faute de la victime
+CONCLUSION|Le gardien est responsable de plein droit si la chose a été l’instrument du dommage, sauf exonération admise.
+REFS|C. civ., art. 1242, al. 1er ; Ch. réunies, 2 déc. 1941, Franck ; Ch. réunies, 13 févr. 1930, Jand’heur.
+
+FICHE|16
+TITLE|Responsabilité du commettant et immunité du préposé
+QUESTION|Un salarié ou préposé cause un dommage dans l’exercice de ses fonctions.
+MAJOR|Le commettant répond de plein droit du dommage causé par son préposé dans les fonctions auxquelles il l'a employé. La victime doit établir un lien de préposition, un fait générateur imputable au préposé et un lien avec ses fonctions. Le commettant est exonéré en cas d'abus de fonctions, lequel suppose cumulativement que le préposé ait agi hors de ses fonctions, sans autorisation et à des fins étrangères à ses attributions. Le préposé qui agit dans les limites de sa mission bénéficie en principe d'une immunité civile à l'égard des tiers, sauf notamment en cas de faute pénale intentionnelle ou lorsqu'il a dépassé les limites de sa mission.
+CHECK|Lien de subordination
+CHECK|Faute ou fait générateur du préposé
+CHECK|Lien avec les fonctions
+CHECK|Trois critères de l’abus de fonctions
+CHECK|Limites de la mission et éventuelle infraction
+CONCLUSION|Le commettant est tenu sauf abus de fonctions ; le préposé reste en principe personnellement à l’abri lorsqu’il a agi dans les limites de sa mission.
+REFS|C. civ., art. 1242, al. 5 ; Ass. plén., 19 mai 1988 ; Ass. plén., 25 févr. 2000, Costedoat ; 14 déc. 2001, Cousin.
+
+FICHE|17
+TITLE|Accident de la circulation - loi du 5 juillet 1985
+QUESTION|Un véhicule terrestre à moteur est impliqué dans un accident ayant causé des dommages.
+MAJOR|La loi du 5 juillet 1985 s'applique lorsqu'un véhicule terrestre à moteur est impliqué dans un accident de la circulation. L'implication s'entend largement : en cas de contact, elle est en principe établie ; sans contact, il faut démontrer le rôle du véhicule dans l'accident. Les victimes non conductrices de dommages corporels sont indemnisées sans que leur faute leur soit opposable, sauf faute inexcusable cause exclusive, laquelle ne peut être opposée aux victimes spécialement protégées. La faute du conducteur victime peut limiter ou exclure son indemnisation. Pour les dommages aux biens, la faute de la victime peut limiter ou exclure la réparation.
+CHECK|VTM
+CHECK|Accident de circulation
+CHECK|Implication
+CHECK|Qualité de conducteur ou non-conducteur
+CHECK|Nature corporelle ou matérielle du dommage
+CHECK|Faute de la victime
+CONCLUSION|Le droit à indemnisation dépend surtout de la qualité de la victime et de la nature de son dommage, le régime étant très favorable aux non-conducteurs corporels.
+REFS|Loi n° 85-677 du 5 juillet 1985, art. 1 à 6.
+
+FICHE|18
+TITLE|Solidarité passive et recours entre codébiteurs
+QUESTION|Plusieurs débiteurs sont tenus d’une même dette et l’un d’eux a payé.
+MAJOR|La solidarité passive ne se présume pas ; elle résulte de la loi ou du contrat. Lorsqu'elle existe, le créancier peut demander la totalité de la dette à l'un quelconque des codébiteurs, et le paiement effectué par l'un libère les autres à l'égard du créancier. Dans leurs rapports internes, le codébiteur qui a payé au-delà de sa part dispose d'un recours contributoire contre les autres, chacun selon sa part. L'insolvabilité de l'un se répartit entre les codébiteurs solvables, y compris celui qui a payé. Les exceptions purement personnelles à un codébiteur ne peuvent être opposées par les autres, contrairement aux exceptions communes.
+CHECK|Source de la solidarité
+CHECK|Montant réclamé par le créancier
+CHECK|Paiements déjà effectués
+CHECK|Parts contributives
+CHECK|Exceptions communes ou personnelles
+CHECK|Insolvabilité éventuelle
+CONCLUSION|Le créancier peut poursuivre un seul codébiteur pour le tout ; le règlement définitif se répartit ensuite entre les codébiteurs selon leurs parts.
+REFS|C. civ., art. 1310 et 1313 à 1319.
