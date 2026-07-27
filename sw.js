@@ -1,15 +1,17 @@
-const CACHE_VERSION = 'lexqcm-pwa-v1.3.3';
+const CACHE_VERSION = 'lexqcm-pwa-v1.3.4';
 const CORE_CACHE = `${CACHE_VERSION}-core`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
-const DESIGN_HREF = './styles-v2.css?v=1.3.3';
-const DESIGN_MARKER = 'data-lexqcm-design="v133"';
+const DESIGN_HREF = './styles-v2.css?v=1.3.4';
+const MOBILE_HREF = './mobile-fix.css?v=1.3.4';
+const DESIGN_MARKER = 'data-lexqcm-design="v134"';
 
 const CORE = [
   './',
   './index.html',
   './manifest.webmanifest',
   './offline.html',
-  './styles-v2.css?v=1.3.3',
+  './styles-v2.css?v=1.3.4',
+  './mobile-fix.css?v=1.3.4',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
@@ -18,9 +20,7 @@ const CORE = [
 
 self.addEventListener('install', event => {
   self.skipWaiting();
-  event.waitUntil(
-    caches.open(CORE_CACHE).then(cache => cache.addAll(CORE))
-  );
+  event.waitUntil(caches.open(CORE_CACHE).then(cache => cache.addAll(CORE)));
 });
 
 self.addEventListener('activate', event => {
@@ -47,10 +47,10 @@ async function applyDesign(response) {
   try {
     let html = await response.text();
     if (!html.includes(DESIGN_MARKER)) {
-      const designLink = `<link ${DESIGN_MARKER} rel="stylesheet" href="${DESIGN_HREF}">`;
+      const designLinks = `<link ${DESIGN_MARKER} rel="stylesheet" href="${DESIGN_HREF}"><link rel="stylesheet" href="${MOBILE_HREF}">`;
       html = html.includes('</head>')
-        ? html.replace('</head>', `${designLink}</head>`)
-        : `${designLink}${html}`;
+        ? html.replace('</head>', `${designLinks}</head>`)
+        : `${designLinks}${html}`;
     }
 
     const headers = new Headers(response.headers);
@@ -92,7 +92,7 @@ async function networkFirstAsset(request) {
     if (response && response.ok) await cache.put(request, response.clone());
     return response;
   } catch {
-    return (await caches.match(request)) || Response.error();
+    return (await caches.match(request, {ignoreSearch:true})) || Response.error();
   }
 }
 
@@ -119,7 +119,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  if (request.destination === 'style' || url.pathname.endsWith('/styles-v2.css')) {
+  if (request.destination === 'style' || url.pathname.endsWith('/styles-v2.css') || url.pathname.endsWith('/mobile-fix.css')) {
     event.respondWith(networkFirstAsset(request));
     return;
   }
