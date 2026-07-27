@@ -17,6 +17,7 @@ jobs:
           node-version: 24
       - run: npm install
       - run: npm run import:legacy
+      - run: node scripts/validate-import.mjs
       - run: npm run typecheck
       - run: npm run build
         env:
