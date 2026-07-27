@@ -1,14 +1,15 @@
-const CACHE_VERSION = 'lexqcm-pwa-v1.3.2';
+const CACHE_VERSION = 'lexqcm-pwa-v1.3.3';
 const CORE_CACHE = `${CACHE_VERSION}-core`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
+const DESIGN_HREF = './styles-v2.css?v=1.3.3';
+const DESIGN_MARKER = 'data-lexqcm-design="v133"';
+
 const CORE = [
   './',
   './index.html',
   './manifest.webmanifest',
   './offline.html',
-  './styles.css',
-  './styles-v2.css',
-  './app.js',
+  './styles-v2.css?v=1.3.3',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
@@ -16,6 +17,7 @@ const CORE = [
 ];
 
 self.addEventListener('install', event => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CORE_CACHE).then(cache => cache.addAll(CORE))
   );
@@ -24,7 +26,11 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter(k => k.startsWith('lexqcm-pwa-') && k !== CORE_CACHE && k !== RUNTIME_CACHE).map(k => caches.delete(k)));
+    await Promise.all(
+      keys
+        .filter(k => k.startsWith('lexqcm-pwa-') && k !== CORE_CACHE && k !== RUNTIME_CACHE)
+        .map(k => caches.delete(k))
+    );
     await self.clients.claim();
   })());
 });
@@ -33,20 +39,60 @@ self.addEventListener('message', event => {
   if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
+async function applyDesign(response) {
+  if (!response) return response;
+  const type = response.headers.get('content-type') || '';
+  if (!type.includes('text/html')) return response;
+
+  try {
+    let html = await response.text();
+    if (!html.includes(DESIGN_MARKER)) {
+      const designLink = `<link ${DESIGN_MARKER} rel="stylesheet" href="${DESIGN_HREF}">`;
+      html = html.includes('</head>')
+        ? html.replace('</head>', `${designLink}</head>`)
+        : `${designLink}${html}`;
+    }
+
+    const headers = new Headers(response.headers);
+    headers.delete('content-length');
+    return new Response(html, {
+      status: response.status,
+      statusText: response.statusText,
+      headers
+    });
+  } catch {
+    return response;
+  }
+}
+
 async function networkFirstNavigation(request) {
   try {
-    const response = await fetch(request);
+    const response = await fetch(request, { cache: 'no-store' });
     if (response && response.ok) {
+      const designed = await applyDesign(response.clone());
       const cache = await caches.open(RUNTIME_CACHE);
-      cache.put(request, response.clone());
-      cache.put('./index.html', response.clone());
+      await cache.put(request, designed.clone());
+      await cache.put('./index.html', designed.clone());
+      return designed;
     }
+    return applyDesign(response);
+  } catch {
+    const cached = (await caches.match(request, { ignoreSearch: true })) ||
+                   (await caches.match('./index.html')) ||
+                   (await caches.match('./')) ||
+                   (await caches.match('./offline.html'));
+    return applyDesign(cached);
+  }
+}
+
+async function networkFirstAsset(request) {
+  const cache = await caches.open(RUNTIME_CACHE);
+  try {
+    const response = await fetch(request, { cache: 'no-store' });
+    if (response && response.ok) await cache.put(request, response.clone());
     return response;
   } catch {
-    return (await caches.match(request, {ignoreSearch:true})) ||
-           (await caches.match('./index.html')) ||
-           (await caches.match('./')) ||
-           (await caches.match('./offline.html'));
+    return (await caches.match(request)) || Response.error();
   }
 }
 
@@ -63,6 +109,7 @@ async function staleWhileRevalidate(request) {
 self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
+
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
   if (url.pathname.endsWith('/sw.js')) return;
@@ -72,16 +119,23 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  if (['style','script','image','font','manifest'].includes(request.destination)) {
+  if (request.destination === 'style' || url.pathname.endsWith('/styles-v2.css')) {
+    event.respondWith(networkFirstAsset(request));
+    return;
+  }
+
+  if (['script', 'image', 'font', 'manifest'].includes(request.destination)) {
     event.respondWith(staleWhileRevalidate(request));
     return;
   }
 
-  event.respondWith(caches.match(request).then(cached => cached || fetch(request).then(async response => {
-    if (response && response.ok) {
-      const cache = await caches.open(RUNTIME_CACHE);
-      cache.put(request, response.clone());
-    }
-    return response;
-  })));
+  event.respondWith(
+    caches.match(request).then(cached => cached || fetch(request).then(async response => {
+      if (response && response.ok) {
+        const cache = await caches.open(RUNTIME_CACHE);
+        cache.put(request, response.clone());
+      }
+      return response;
+    }))
+  );
 });
