@@ -1,0 +1,90 @@
+DOCUMENT|Majeures types - Droit social
+SUBTITLE|17 constructions modulaires pour le cas pratique CRFPA
+NOTE|Synthèses originales - édition fondée sur le fascicule 2025
+
+FICHE|01
+TITLE|Qualification du contrat de travail
+QUESTION|Une personne présentée comme indépendante demande la requalification de la relation en contrat de travail.
+MAJOR|Le contrat de travail se caractérise par l'exécution d'une prestation de travail, le versement d'une rémunération et l'existence d'un lien de subordination juridique. Le lien de subordination résulte de l'exécution d'un travail sous l'autorité d'une personne ayant le pouvoir de donner des ordres et directives, d'en contrôler l'exécution et de sanctionner les manquements. La qualification donnée par les parties est indifférente : le juge recherche les conditions réelles d'exercice de l'activité. L'intégration dans un service organisé peut constituer un indice lorsque l'employeur en détermine unilatéralement les conditions.
+CHECK|Prestation réelle
+CHECK|Rémunération
+CHECK|Pouvoir de direction
+CHECK|Pouvoir de contrôle
+CHECK|Pouvoir de sanction
+CHECK|Conditions concrètes plutôt que contrat écrit
+CONCLUSION|La relation doit être requalifiée si les faits révèlent un véritable pouvoir de direction, de contrôle et de sanction.
+REFS|Cass. soc., 13 nov. 1996, Société Générale ; C. trav., art. L. 8221-6 pour la présomption de non-salariat.
+
+FICHE|02
+TITLE|Validité et renouvellement de la période d’essai
+QUESTION|La durée ou le renouvellement de la période d’essai est contesté.
+MAJOR|La période d'essai permet à l'employeur d'évaluer les compétences du salarié et à celui-ci d'apprécier si l'emploi lui convient. Elle et la possibilité de son renouvellement ne se présument pas : elles doivent être expressément stipulées dans le contrat ou la lettre d'engagement. Sa durée ne peut excéder les maxima légaux applicables à la catégorie du salarié. Le renouvellement n'est possible qu'une seule fois, si un accord de branche étendu le prévoit, si le contrat en mentionne la possibilité et si le salarié y consent de manière claire et non équivoque avant l'expiration de la période initiale.
+CHECK|Stipulation expresse
+CHECK|Catégorie du salarié et durée
+CHECK|Accord de branche étendu
+CHECK|Consentement exprès au renouvellement
+CHECK|Date de l’avenant
+CHECK|Suspensions éventuelles
+CONCLUSION|À défaut de l’une des conditions, la période d’essai ou son renouvellement est inopposable et la rupture relève du droit du licenciement.
+REFS|C. trav., art. L. 1221-19 à L. 1221-23.
+
+FICHE|03
+TITLE|Rupture abusive de la période d’essai
+QUESTION|L’essai a été rompu pour un motif étranger aux compétences ou dans des conditions brutales.
+MAJOR|Pendant la période d'essai valable, chacune des parties peut rompre le contrat sans appliquer la procédure de licenciement, sous réserve du délai de prévenance. Ce droit ne peut toutefois être exercé abusivement ou pour un motif discriminatoire. La rupture est abusive lorsqu'elle est étrangère à la finalité de l'essai, notamment lorsque l'employeur n'a pas réellement évalué les compétences ou invoque un motif non professionnel. Une irrégularité dans le délai de prévenance n'a pas pour effet de prolonger l'essai mais ouvre droit à l'indemnité prévue par la loi.
+CHECK|Essai encore en cours
+CHECK|Temps effectivement laissé pour apprécier les compétences
+CHECK|Motif réel
+CHECK|Discrimination éventuelle
+CHECK|Respect du délai de prévenance
+CONCLUSION|La rupture reste valable mais peut donner lieu à réparation si elle est abusive, discriminatoire ou irrégulière.
+REFS|C. trav., art. L. 1221-20, L. 1221-25 et L. 1221-26.
+
+FICHE|04
+TITLE|CDD - motif, formalisme et requalification
+QUESTION|Un salarié conteste la validité de son contrat à durée déterminée.
+MAJOR|Le contrat à durée déterminée ne peut avoir ni pour objet ni pour effet de pourvoir durablement un emploi lié à l'activité normale et permanente de l'entreprise. Il ne peut être conclu que dans les cas autorisés par la loi et doit être établi par écrit, comporter la définition précise de son motif et les mentions obligatoires. Le motif énoncé fixe les limites du litige et ne peut être remplacé par un autre. Le recours illicite, l'absence d'écrit ou l'imprécision du motif peut entraîner la requalification en contrat à durée indéterminée, avec les conséquences indemnitaires prévues.
+CHECK|Cas de recours autorisé
+CHECK|Besoin temporaire réel
+CHECK|Écrit signé
+CHECK|Motif précis
+CHECK|Durée et renouvellements
+CHECK|Succession de contrats
+CONCLUSION|Si le contrat pourvoit durablement un emploi permanent ou méconnaît les exigences essentielles, la requalification en CDI est encourue.
+REFS|C. trav., art. L. 1242-1, L. 1242-2, L. 1242-12 et L. 1245-1.
+
+FICHE|05
+TITLE|Modification du contrat et changement des conditions de travail
+QUESTION|L’employeur modifie les fonctions, la rémunération, les horaires ou le lieu de travail.
+MAJOR|L'employeur peut imposer un simple changement des conditions de travail dans l'exercice de son pouvoir de direction, mais il ne peut modifier un élément du contrat sans l'accord du salarié. Constituent notamment des éléments contractuels la rémunération, la qualification et, selon les circonstances, la durée du travail ou un lieu contractualisé. Le refus d'une modification du contrat n'est pas fautif ; l'employeur doit y renoncer ou engager une procédure de rupture fondée sur la cause ayant motivé la proposition. Le refus d'un simple changement des conditions de travail peut, en revanche, constituer une faute.
+CHECK|Élément contractuel ou simple condition de travail
+CHECK|Clauses du contrat
+CHECK|Ampleur du changement
+CHECK|Motif de la décision
+CHECK|Réaction du salarié
+CONCLUSION|L’accord du salarié est nécessaire si un élément contractuel est atteint ; à défaut, l’employeur ne peut imposer la modification.
+REFS|Jurisprudence constante de la chambre sociale ; C. trav., art. L. 1222-6 en matière économique.
+
+FICHE|06
+TITLE|Clause de mobilité
+QUESTION|L’employeur demande une mutation sur le fondement d’une clause contractuelle.
+MAJOR|La clause de mobilité est valable si elle définit de façon précise sa zone géographique et ne permet pas à l'employeur d'en étendre unilatéralement la portée. Sa mise en œuvre constitue en principe un changement des conditions de travail, mais elle doit être justifiée par l'intérêt de l'entreprise, mise en œuvre de bonne foi et respecter un délai de prévenance raisonnable. Elle ne peut porter une atteinte disproportionnée à la vie personnelle et familiale du salarié. Une mobilité hors de la zone prévue constitue une modification du contrat nécessitant l'accord du salarié.
+CHECK|Précision de la zone
+CHECK|Mutation dans la zone
+CHECK|Intérêt de l’entreprise
+CHECK|Délai de prévenance
+CHECK|Atteinte à la vie personnelle
+CHECK|Bonne foi
+CONCLUSION|Le refus n’est fautif que si la clause est valable et mise en œuvre loyalement, sans atteinte disproportionnée aux droits du salarié.
+REFS|C. trav., art. L. 1121-1 ; jurisprudence sociale sur les clauses de mobilité.
+
+FICHE|07
+TITLE|Heures supplémentaires - preuve et paiement
+QUESTION|Un salarié réclame le paiement d’heures supplémentaires non comptabilisées.
+MAJOR|En cas de litige relatif à l'existence ou au nombre d'heures de travail accomplies, le salarié doit présenter des éléments suffisamment précis quant aux heures non rémunérées afin de permettre à l'employeur, qui assure le contrôle du temps de travail, d'y répondre utilement en produisant ses propres éléments. Le juge forme sa conviction au vu de l'ensemble des pièces, sans faire peser la charge de la preuve sur une seule partie. Les heures accomplies au-delà de la durée légale ou équivalente donnent lieu aux majorations ou au repos compensateur applicables, sous réserve des règles conventionnelles.
+CHECK|Éléments précis du salarié
+CHECK|Documents de contrôle de l’employeur
+CHECK|Seuil hebdomadaire applicable
+CHECK|Autorisation explicite ou implicite
+CHECK|Majorations et repos
+CONCLUSION|Le juge évalue les heures dues au r
