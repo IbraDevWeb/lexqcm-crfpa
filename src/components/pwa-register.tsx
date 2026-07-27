@@ -12,46 +12,51 @@ function removeLegacyStyles() {
   })
 }
 
+function isTechnicalVercelHost(hostname: string) {
+  return hostname.endsWith('.vercel.app') && hostname !== 'lexqcm-crfpa.vercel.app'
+}
+
+async function clearOldLexCaches() {
+  if (!('caches' in window)) return
+  const keys = await caches.keys()
+  await Promise.all(keys.filter((key) => key.startsWith('lexqcm-')).map((key) => caches.delete(key)))
+}
+
 export function PwaRegister() {
   useEffect(() => {
     removeLegacyStyles()
+    const hostname = window.location.hostname
 
-    const observer = new MutationObserver(removeLegacyStyles)
-    observer.observe(document.head, { childList: true, subtree: true })
-
-    const migrate = async () => {
+    const setup = async () => {
       try {
-        if ('caches' in window) {
-          const keys = await caches.keys()
-          await Promise.all(
-            keys
-              .filter((key) => key.startsWith('lexqcm-pwa-') || key === 'lexqcm-next-v2-1')
-              .map((key) => caches.delete(key)),
-          )
+        if (isTechnicalVercelHost(hostname)) {
+          await clearOldLexCaches()
+          if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations()
+            await Promise.all(registrations.map((registration) => registration.unregister()))
+          }
+          return
+        }
+
+        let manifest = document.querySelector<HTMLLinkElement>('link[rel="manifest"][data-lexqcm-manifest]')
+        if (!manifest) {
+          manifest = document.createElement('link')
+          manifest.rel = 'manifest'
+          manifest.href = '/manifest.webmanifest'
+          manifest.setAttribute('data-lexqcm-manifest', 'true')
+          document.head.appendChild(manifest)
         }
 
         if (!('serviceWorker' in navigator)) return
         const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' })
         await registration.update()
-
         if (registration.waiting) registration.waiting.postMessage({ type: 'SKIP_WAITING' })
-
-        const reloadKey = 'lexqcm-next-sw-v2-2'
-        const onControllerChange = () => {
-          if (sessionStorage.getItem(reloadKey)) return
-          sessionStorage.setItem(reloadKey, '1')
-          window.location.reload()
-        }
-
-        navigator.serviceWorker.addEventListener('controllerchange', onControllerChange, { once: true })
       } catch (error) {
-        console.warn('Service worker migration failed', error)
+        console.warn('Service worker registration failed', error)
       }
     }
 
-    void migrate()
-
-    return () => observer.disconnect()
+    void setup()
   }, [])
 
   return null
