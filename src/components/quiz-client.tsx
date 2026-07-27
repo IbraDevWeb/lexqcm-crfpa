@@ -1,31 +1,21 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { emptyProgress, isDue, normalizeProgress, recordAnswer, type ProgressState } from '@/lib/progress'
-
-type Question = {
-  id: string
-  subject: string
-  topic: string
-  mode?: string
-  type?: 'single' | 'multiple'
-  difficulty?: number
-  stem: string
-  options: string[]
-  answers: number[]
-  explanation?: string
-  source?: { label?: string; url?: string; kind?: string }
-}
+import { useSearchParams } from 'next/navigation'
+import { isDue, questionStat, recordAnswer } from '@/lib/progress'
+import { modeLabel, type LexQuestion } from '@/lib/catalog'
+import { useProgress } from '@/lib/use-progress'
 
 type Session = {
-  items: Question[]
+  items: LexQuestion[]
   index: number
   score: number
   answers: { id: string; ok: boolean; selected: number[] }[]
   startedAt: number
+  timed: boolean
 }
 
-const LOCAL_KEY = 'lexqcm_next_progress_v3'
+const CUSTOM_KEY = 'lexqcm_custom_questions_v1'
 
 function shuffle<T>(items: T[]) {
   const copy = [...items]
@@ -36,116 +26,128 @@ function shuffle<T>(items: T[]) {
   return copy
 }
 
-function correct(question: Question, selected: number[]) {
+function correct(question: LexQuestion, selected: number[]) {
   const a = [...question.answers].sort((x, y) => x - y)
   const b = [...selected].sort((x, y) => x - y)
   return a.length === b.length && a.every((value, index) => value === b[index])
 }
 
+function formatTime(total: number) {
+  const seconds = Math.max(0, Math.floor(total))
+  return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`
+}
+
 export function QuizClient() {
-  const [questions, setQuestions] = useState<Question[]>([])
-  const [progress, setProgress] = useState<ProgressState>(emptyProgress())
-  const [loading, setLoading] = useState(true)
+  const searchParams = useSearchParams()
+  const requestedMode = searchParams.get('mode') || ''
+  const { progress, persist, loading: progressLoading, syncing, online, error: progressError } = useProgress()
+  const [questions, setQuestions] = useState<LexQuestion[]>([])
+  const [loadingBank, setLoadingBank] = useState(true)
   const [loadError, setLoadError] = useState('')
   const [subject, setSubject] = useState('')
+  const [topic, setTopic] = useState('')
+  const [mode, setMode] = useState(requestedMode === 'update' ? 'update' : '')
+  const [difficulty, setDifficulty] = useState('')
+  const [type, setType] = useState('')
   const [count, setCount] = useState(20)
   const [dueOnly, setDueOnly] = useState(false)
+  const [timed, setTimed] = useState(false)
   const [session, setSession] = useState<Session | null>(null)
   const [selected, setSelected] = useState<number[]>([])
   const [validated, setValidated] = useState(false)
   const [lastOk, setLastOk] = useState(false)
   const [result, setResult] = useState<{ score: number; total: number; duration: number } | null>(null)
-  const [syncing, setSyncing] = useState(false)
-  const [online, setOnline] = useState(true)
-
-  async function syncCloud(nextProgress: ProgressState) {
-    if (!navigator.onLine) return
-    setSyncing(true)
-    try {
-      await fetch('/api/progress', {
-        method: 'PUT',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ progress: nextProgress }),
-      })
-    } catch {
-      // Local progress remains the source of truth until the next online event.
-    } finally {
-      setSyncing(false)
-    }
-  }
-
-  function persist(nextProgress: ProgressState) {
-    setProgress(nextProgress)
-    localStorage.setItem(LOCAL_KEY, JSON.stringify(nextProgress))
-    void syncCloud(nextProgress)
-  }
+  const [secondsLeft, setSecondsLeft] = useState(0)
 
   useEffect(() => {
-    setOnline(navigator.onLine)
-    const onOnline = () => {
-      setOnline(true)
-      const local = localStorage.getItem(LOCAL_KEY)
-      if (local) void syncCloud(normalizeProgress(JSON.parse(local)))
-    }
-    const onOffline = () => setOnline(false)
-    window.addEventListener('online', onOnline)
-    window.addEventListener('offline', onOffline)
-
     const load = async () => {
       try {
-        const [qRes, pRes] = await Promise.all([
-          fetch('/generated/questions.json', { cache: 'no-store' }),
-          fetch('/api/progress', { cache: 'no-store' }),
-        ])
-        if (!qRes.ok) throw new Error('La banque QCM n’a pas pu être chargée.')
-        const bank = await qRes.json()
-        setQuestions(Array.isArray(bank) ? bank : [])
-
-        let cloud = emptyProgress()
-        if (pRes.ok) {
-          const data = await pRes.json()
-          cloud = normalizeProgress(data.progress)
-        }
-        const localRaw = localStorage.getItem(LOCAL_KEY)
-        const local = localRaw ? normalizeProgress(JSON.parse(localRaw)) : emptyProgress()
-        const chosen = local.answered > cloud.answered ? local : cloud
-        setProgress(chosen)
-        localStorage.setItem(LOCAL_KEY, JSON.stringify(chosen))
-        if (local.answered > cloud.answered) void syncCloud(chosen)
+        const response = await fetch('/generated/questions.json', { cache: 'no-store' })
+        if (!response.ok) throw new Error('La banque QCM n’a pas pu être chargée.')
+        const bank = await response.json()
+        let custom: LexQuestion[] = []
+        try {
+          const raw = localStorage.getItem(CUSTOM_KEY)
+          const parsed = raw ? JSON.parse(raw) : []
+          custom = Array.isArray(parsed) ? parsed : []
+        } catch {}
+        setQuestions([...(Array.isArray(bank) ? bank : []), ...custom])
       } catch (error) {
         setLoadError(error instanceof Error ? error.message : 'Erreur de chargement.')
       } finally {
-        setLoading(false)
+        setLoadingBank(false)
       }
     }
     void load()
-
-    return () => {
-      window.removeEventListener('online', onOnline)
-      window.removeEventListener('offline', onOffline)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const subjects = useMemo(() => [...new Set(questions.map((q) => q.subject))].sort((a, b) => a.localeCompare(b, 'fr')), [questions])
-  const pool = useMemo(() => questions.filter((q) => (!subject || q.subject === subject) && (!dueOnly || isDue(progress, q.id))), [questions, subject, dueOnly, progress])
+  useEffect(() => {
+    if (!session?.timed) return
+    setSecondsLeft(session.items.length * 90)
+  }, [session?.timed, session?.items.length, session?.startedAt])
 
-  function start() {
+  useEffect(() => {
+    if (!session?.timed) return
+    const timer = window.setInterval(() => {
+      setSecondsLeft((current) => {
+        if (current <= 1) {
+          window.clearInterval(timer)
+          setTimeout(() => void finishTimedOut(), 0)
+          return 0
+        }
+        return current - 1
+      })
+    }, 1000)
+    return () => window.clearInterval(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.startedAt, session?.timed])
+
+  const subjects = useMemo(() => [...new Set(questions.map((q) => q.subject))].sort((a, b) => a.localeCompare(b, 'fr')), [questions])
+  const topics = useMemo(() => [...new Set(questions.filter((q) => !subject || q.subject === subject).map((q) => q.topic))].sort((a, b) => a.localeCompare(b, 'fr')), [questions, subject])
+
+  const basePool = useMemo(() => questions.filter((q) =>
+    (!subject || q.subject === subject) &&
+    (!topic || q.topic === topic) &&
+    (!mode || q.mode === mode) &&
+    (!difficulty || String(q.difficulty ?? '') === difficulty) &&
+    (!type || (q.type ?? (q.answers.length > 1 ? 'multiple' : 'single')) === type) &&
+    (!dueOnly || isDue(progress, q.id)),
+  ), [questions, subject, topic, mode, difficulty, type, dueOnly, progress])
+
+  const errorIds = useMemo(() => new Set(Object.entries(progress.questionStats).filter(([, stat]) => stat.wrong > 0 && (stat.correct === 0 || stat.wrong >= stat.correct)).map(([id]) => id)), [progress.questionStats])
+  const favoriteIds = useMemo(() => new Set(progress.favorites), [progress.favorites])
+
+  function makePool(kind = requestedMode) {
+    if (kind === 'errors') return questions.filter((q) => errorIds.has(q.id))
+    if (kind === 'favorites') return questions.filter((q) => favoriteIds.has(q.id))
+    if (kind === 'update') return questions.filter((q) => q.mode === 'update')
+    if (kind === 'adaptive') {
+      const due = questions.filter((q) => isDue(progress, q.id))
+      const source = due.length >= 20 ? due : questions
+      return [...source].sort((a, b) => {
+        const A = questionStat(progress, a.id)
+        const B = questionStat(progress, b.id)
+        return (B.wrong - B.correct) - (A.wrong - A.correct)
+      }).slice(0, 300)
+    }
+    return basePool
+  }
+
+  function start(kind = '') {
+    const pool = makePool(kind || requestedMode)
     if (!pool.length) return
     setResult(null)
     setSelected([])
     setValidated(false)
-    setSession({ items: shuffle(pool).slice(0, Math.min(count, pool.length)), index: 0, score: 0, answers: [], startedAt: Date.now() })
+    const items = shuffle(pool).slice(0, Math.min(count, pool.length))
+    setSession({ items, index: 0, score: 0, answers: [], startedAt: Date.now(), timed })
   }
 
   function toggle(index: number) {
     if (!session || validated) return
     const question = session.items[session.index]
-    if ((question.type ?? (question.answers.length > 1 ? 'multiple' : 'single')) === 'single') {
-      setSelected([index])
-    } else {
-      setSelected((current) => current.includes(index) ? current.filter((x) => x !== index) : [...current, index])
-    }
+    if ((question.type ?? (question.answers.length > 1 ? 'multiple' : 'single')) === 'single') setSelected([index])
+    else setSelected((current) => current.includes(index) ? current.filter((x) => x !== index) : [...current, index])
   }
 
   function validate() {
@@ -154,96 +156,81 @@ export function QuizClient() {
     const ok = correct(question, selected)
     const nextProgress = recordAnswer(progress, question, ok)
     persist(nextProgress)
+    const nextSession = { ...session, score: session.score + (ok ? 1 : 0), answers: [...session.answers, { id: question.id, ok, selected: [...selected] }] }
+    setSession(nextSession)
     setLastOk(ok)
+    if (session.timed) {
+      if (session.index >= session.items.length - 1) void finish(nextSession)
+      else { setSession({ ...nextSession, index: session.index + 1 }); setSelected([]); setValidated(false) }
+      return
+    }
     setValidated(true)
-    setSession({
-      ...session,
-      score: session.score + (ok ? 1 : 0),
-      answers: [...session.answers, { id: question.id, ok, selected: [...selected] }],
-    })
   }
 
   async function finish(current: Session) {
     const duration = Math.max(1, Math.round((Date.now() - current.startedAt) / 1000))
     setResult({ score: current.score, total: current.items.length, duration })
-    setSession(null)
-    setSelected([])
-    setValidated(false)
+    setSession(null); setSelected([]); setValidated(false)
     try {
-      await fetch('/api/session', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          mode: dueOnly ? 'review' : 'practice',
-          subject: subject || null,
-          score: current.score,
-          total: current.items.length,
-          durationSeconds: duration,
-          answers: current.answers,
-        }),
-      })
-    } catch {
-      // Session history is secondary to question progress.
-    }
+      await fetch('/api/session', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ mode: current.timed ? 'exam' : (dueOnly ? 'review' : 'practice'), subject: subject || null, score: current.score, total: current.items.length, durationSeconds: duration, answers: current.answers }) })
+    } catch {}
+  }
+
+  async function finishTimedOut() {
+    if (session?.timed) await finish(session)
   }
 
   function next() {
     if (!session) return
-    if (session.index >= session.items.length - 1) {
-      void finish(session)
-      return
-    }
-    setSession({ ...session, index: session.index + 1 })
-    setSelected([])
-    setValidated(false)
+    if (session.index >= session.items.length - 1) { void finish(session); return }
+    setSession({ ...session, index: session.index + 1 }); setSelected([]); setValidated(false)
   }
 
   function toggleFavorite(id: string) {
-    const favorites = progress.favorites.includes(id)
-      ? progress.favorites.filter((x) => x !== id)
-      : [...progress.favorites, id]
+    const favorites = progress.favorites.includes(id) ? progress.favorites.filter((x) => x !== id) : [...progress.favorites, id]
     persist({ ...progress, favorites })
   }
 
-  if (loading) return <div className="card" style={{ display: 'flex', gap: 12, alignItems: 'center' }}><div className="spinner" /> Chargement de la banque…</div>
-  if (loadError) return <div className="error">{loadError}</div>
+  if (loadingBank || progressLoading) return <div className="card loadingCard"><div className="spinner" /> Chargement de la banque…</div>
+  if (loadError || progressError) return <div className="error">{loadError || progressError}</div>
 
   if (result) {
     const rate = result.total ? Math.round(result.score / result.total * 100) : 0
-    return <div className="quizShell"><div className="card" style={{ textAlign: 'center', padding: 32 }}><span className={`badge ${rate >= 70 ? 'badgeGood' : 'badgeBad'}`}>Session terminée</span><div style={{ fontSize: 58, fontWeight: 900, letterSpacing: '-.06em', margin: '10px 0 0' }}>{result.score}/{result.total}</div><h2>{rate}% de réussite</h2><p className="muted">Les erreurs reviendront plus tôt dans la répétition espacée.</p><div className="actions" style={{ justifyContent: 'center' }}><button className="btn btnPrimary" onClick={start}>Nouvelle série</button><button className="btn btnGhost" onClick={() => setResult(null)}>Modifier les filtres</button></div></div></div>
+    return <div className="quizShell"><div className="card resultCard"><span className={`badge ${rate >= 70 ? 'badgeGood' : 'badgeBad'}`}>Session terminée</span><div className="resultScore">{result.score}/{result.total}</div><h2>{rate}% de réussite</h2><p className="muted">Les erreurs reviendront plus tôt dans la répétition espacée.</p><div className="resultMiniGrid"><div><b>{result.total - result.score}</b><span>erreurs</span></div><div><b>{formatTime(result.duration)}</b><span>temps</span></div><div><b>{progress.streak}</b><span>jours de série</span></div></div><div className="actions centerActions"><button className="btn btnPrimary" onClick={() => start()}>Nouvelle série</button><button className="btn btnSoft" onClick={() => { setResult(null); setSession(null) }}>Modifier les filtres</button></div></div></div>
   }
 
-  if (!session) return <>
-    <div className="top"><div><h1>Entraînement</h1><p>{questions.length.toLocaleString('fr-FR')} questions chargées depuis la banque LexQCM.</p></div><span className="badge"><span className="offlineDot" style={{ background: online ? '#059669' : '#d97706' }} />{online ? (syncing ? 'Synchronisation…' : 'Cloud synchronisé') : 'Mode hors ligne'}</span></div>
-    <div className="card">
-      <div className="grid">
-        <div style={{ gridColumn: 'span 6' }} className="field"><label>Matière</label><select value={subject} onChange={(e) => setSubject(e.target.value)}><option value="">Toutes les matières</option>{subjects.map((s) => <option key={s}>{s}</option>)}</select></div>
-        <div style={{ gridColumn: 'span 3' }} className="field"><label>Nombre de questions</label><select value={count} onChange={(e) => setCount(Number(e.target.value))}>{[10,20,30,40,60,100].map((n) => <option key={n} value={n}>{n}</option>)}</select></div>
-        <div style={{ gridColumn: 'span 3', display: 'flex', alignItems: 'end', paddingBottom: 14 }}><label style={{ display: 'flex', gap: 8, alignItems: 'center' }}><input type="checkbox" checked={dueOnly} onChange={(e) => setDueOnly(e.target.checked)} /> Révision due</label></div>
+  if (!session) {
+    const specialLabel = requestedMode === 'errors' ? 'Mode erreurs' : requestedMode === 'favorites' ? 'Mode favoris' : requestedMode === 'update' ? 'Actualisations 2026' : requestedMode === 'adaptive' ? 'Révision adaptative' : ''
+    const poolCount = makePool(requestedMode).length
+    return <>
+      <div className="top"><div><h1>Entraînement</h1><p>{questions.length.toLocaleString('fr-FR')} questions chargées. Configure une série exactement comme dans la V1.</p></div><span className="badge"><span className="offlineDot" style={{ background: online ? '#059669' : '#d97706' }} />{online ? (syncing ? 'Synchronisation…' : 'Cloud synchronisé') : 'Mode hors ligne'}</span></div>
+      {specialLabel && <div className="alert info"><b>{specialLabel}</b> · {poolCount} question{poolCount > 1 ? 's' : ''} disponible{poolCount > 1 ? 's' : ''}.</div>}
+      <div className="card trainingSetup"><div className="formGrid">
+        <div className="field"><label>Matière</label><select value={subject} onChange={(e) => { setSubject(e.target.value); setTopic('') }}><option value="">Toutes les matières</option>{subjects.map((s) => <option key={s}>{s}</option>)}</select></div>
+        <div className="field"><label>Chapitre / thème</label><select value={topic} onChange={(e) => setTopic(e.target.value)}><option value="">Tous les thèmes</option>{topics.map((t) => <option key={t}>{t}</option>)}</select></div>
+        <div className="field"><label>Mode</label><select value={mode} onChange={(e) => setMode(e.target.value)}><option value="">Tout mélanger</option><option value="curated">QCM validés</option><option value="case">Cas pratiques</option><option value="synthesis">QRM synthèse</option><option value="drill">Drills mémoire</option><option value="update">Actualisations 2026</option></select></div>
+        <div className="field"><label>Difficulté</label><select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}><option value="">Toutes</option>{[1,2,3,4].map((n) => <option key={n} value={n}>Niveau {n}</option>)}</select></div>
+        <div className="field"><label>Type</label><select value={type} onChange={(e) => setType(e.target.value)}><option value="">QCM + QRM</option><option value="single">Réponse unique</option><option value="multiple">Réponses multiples</option></select></div>
+        <div className="field"><label>Nombre de questions</label><select value={count} onChange={(e) => setCount(Number(e.target.value))}>{[10,20,30,40,60,100].map((n) => <option key={n} value={n}>{n}</option>)}</select></div>
       </div>
-      <div className="row"><span>Questions correspondant aux filtres</span><b>{pool.length.toLocaleString('fr-FR')}</b></div>
-      <div className="actions" style={{ marginTop: 16 }}><button className="btn btnPrimary" disabled={!pool.length} onClick={start}>Démarrer la série</button></div>
-    </div>
-  </>
+      <div className="checkGrid"><label><input type="checkbox" checked={dueOnly} onChange={(e) => setDueOnly(e.target.checked)} /> Uniquement les questions dues / à revoir</label><label><input type="checkbox" checked={timed} onChange={(e) => setTimed(e.target.checked)} /> Mode examen chronométré · 1 min 30 par question</label></div>
+      <div className="setupNote">{(requestedMode ? poolCount : basePool.length).toLocaleString('fr-FR')} questions correspondent à la sélection.</div>
+      <div className="practiceLaunch"><button className="btn btnPrimary" disabled={!(requestedMode ? poolCount : basePool.length)} onClick={() => start()}>Démarrer</button><button className="btn btnSoft" disabled={!errorIds.size} onClick={() => start('errors')}>Rejouer mes erreurs</button><button className="btn btnGhost" disabled={!favoriteIds.size} onClick={() => start('favorites')}>Mes favoris</button><button className="btn btnGhost" onClick={() => start('adaptive')}>Révision adaptative</button></div></div>
+    </>
+  }
 
   const question = session.items[session.index]
   const isFavorite = progress.favorites.includes(question.id)
+  const sourceKind = question.source?.kind === 'official' || question.mode === 'update' ? 'Officiel / actualisé' : 'Cours / corrigé'
   return <div className="quizShell">
-    <div className="quizTop"><button className="btn btnSoft" onClick={() => setSession(null)}>← Quitter</button><span /><div className="right">{session.index + 1}/{session.items.length}</div></div>
+    <div className="quizTop"><button className="btn btnSoft" onClick={() => setSession(null)}>← Quitter</button>{session.timed ? <span className="timer">⏱ {formatTime(secondsLeft)}</span> : <span /> }<div className="right">{session.index + 1}/{session.items.length}</div></div>
     <div className="progress"><i style={{ width: `${((session.index + (validated ? 1 : 0)) / session.items.length) * 100}%` }} /></div>
     <div className="card questionCard">
-      <div className="meta"><span className="badge badgeBrand">{question.subject}</span><span className="badge">{question.topic}</span>{question.difficulty ? <span className="badge">Niveau {question.difficulty}</span> : null}</div>
-      <h2>{question.stem}</h2>
-      <p className="muted" style={{ fontSize: 12 }}>{question.answers.length > 1 ? 'Plusieurs réponses peuvent être exactes.' : 'Une seule réponse est attendue.'}</p>
-      <div>{question.options.map((option, index) => {
-        let className = 'option'
-        if (!validated && selected.includes(index)) className += ' selected'
-        if (validated && question.answers.includes(index)) className += ' correct'
-        else if (validated && selected.includes(index)) className += ' wrong'
-        return <button key={index} className={className} onClick={() => toggle(index)}><span className="letter">{String.fromCharCode(65 + index)}</span><span>{option}</span></button>
-      })}</div>
-      {validated && <div className={`feedback ${lastOk ? '' : 'bad'}`}><b>{lastOk ? '✓ Bonne réponse' : 'À revoir'}</b><div style={{ marginTop: 6 }}>{question.explanation || 'Correction enregistrée.'}</div>{question.source?.label && <div className="muted" style={{ fontSize: 11, marginTop: 9 }}>Source : {question.source.label}</div>}</div>}
-      <div className="quizActions"><button className="btn btnSoft" onClick={() => toggleFavorite(question.id)}>{isFavorite ? '★ Favori' : '☆ Favori'}</button>{validated ? <button className="btn btnPrimary" onClick={next}>{session.index === session.items.length - 1 ? 'Voir le résultat' : 'Question suivante'}</button> : <button className="btn btnPrimary" disabled={!selected.length} onClick={validate}>Valider</button>}</div>
+      <div className="meta"><span className="badge badgeBrand">{question.subject}</span><span className="badge">{question.topic}</span>{question.difficulty ? <span className="badge badgeWarn">Niveau {question.difficulty}</span> : null}<span className="badge">{modeLabel(question.mode)}</span><span className="badge">{sourceKind}</span></div>
+      <h2>{question.stem}</h2><p className="questionInstruction">{question.answers.length > 1 ? 'Plusieurs réponses peuvent être exactes.' : 'Une seule réponse est attendue.'}</p>
+      <div>{question.options.map((option, index) => { let className = 'option'; if (!validated && selected.includes(index)) className += ' selected'; if (validated && question.answers.includes(index)) className += ' correct'; else if (validated && selected.includes(index)) className += ' wrong'; return <button key={index} className={className} onClick={() => toggle(index)}><span className="letter">{String.fromCharCode(65 + index)}</span><span>{option}</span></button> })}</div>
+      {validated && !session.timed && <div className={`feedback ${lastOk ? '' : 'bad'}`}><b>{lastOk ? '✓ Bonne réponse' : 'À revoir'}</b><div className="feedbackText">{question.explanation || 'Correction enregistrée.'}</div>{question.optionExplanations?.map((text, i) => text ? <div className="optionExplanation" key={i}><b>{String.fromCharCode(65 + i)}.</b> {text}</div> : null)}{question.source?.label && <div className="sourceLine">Source : {question.source.label}{question.source.url ? <> · <a href={question.source.url} target="_blank" rel="noreferrer">ouvrir</a></> : null}</div>}</div>}
+      <div className="quizActions"><button className="btn btnSoft" onClick={() => toggleFavorite(question.id)}>{isFavorite ? '★ Favori' : '☆ Favori'}</button>{validated && !session.timed ? <button className="btn btnPrimary" onClick={next}>{session.index === session.items.length - 1 ? 'Voir le résultat' : 'Question suivante'}</button> : <button className="btn btnPrimary" disabled={!selected.length} onClick={validate}>{session.timed ? 'Enregistrer' : 'Valider'}</button>}</div>
     </div>
   </div>
 }
