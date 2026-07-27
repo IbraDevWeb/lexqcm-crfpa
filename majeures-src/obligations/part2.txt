@@ -1,0 +1,85 @@
+ter sur un aléa accepté. L'erreur sur la valeur ou sur un simple motif est en principe indifférente, sauf exceptions légales. Si les conditions sont réunies, elle entraîne la nullité relative du contrat.
+CHECK|Qualité essentielle entrée dans le champ contractuel
+CHECK|Caractère déterminant
+CHECK|Absence d’aléa accepté
+CHECK|Caractère excusable
+CHECK|Preuve de l’erreur
+CONCLUSION|La nullité relative est encourue si l’erreur déterminante, excusable et portant sur une qualité essentielle convenue est établie.
+REFS|C. civ., art. 1130 à 1136 ; Civ. 1re, 22 févr. 1978, Poussin.
+
+FICHE|08
+TITLE|Dol
+QUESTION|Une partie invoque des mensonges, manœuvres ou une dissimulation intentionnelle.
+MAJOR|Le dol est un vice du consentement résultant de manœuvres, de mensonges ou de la dissimulation intentionnelle d'une information dont l'auteur sait le caractère déterminant pour l'autre partie. Il doit émaner du cocontractant, de son représentant ou d'un tiers de connivence. Il suppose un élément matériel et une intention de tromper. L'erreur provoquée par le dol est toujours excusable et peut porter sur la valeur ou sur un motif. Le dol déterminant entraîne la nullité relative, qu'il ait conduit la victime à ne pas contracter ou à contracter à des conditions substantiellement différentes. Il constitue également une faute susceptible d'engager la responsabilité extracontractuelle.
+CHECK|Acte positif ou réticence intentionnelle
+CHECK|Intention de tromper
+CHECK|Auteur du dol
+CHECK|Caractère déterminant
+CHECK|Préjudice distinct éventuel
+CONCLUSION|La victime peut obtenir la nullité relative et, le cas échéant, des dommages et intérêts réparant un préjudice distinct.
+REFS|C. civ., art. 1130, 1137 à 1139, 1240.
+
+FICHE|09
+TITLE|Violence et abus de dépendance
+QUESTION|Le consentement aurait été obtenu sous menace ou par exploitation d’une dépendance.
+MAJOR|La violence vicie le consentement lorsqu'une contrainte inspire à une partie la crainte d'exposer sa personne, sa fortune ou celles de ses proches à un mal considérable. La menace d'exercer une voie de droit n'est pas une violence, sauf détournement de son but ou recherche d'un avantage manifestement excessif. Il y a également violence lorsqu'une partie abuse de l'état de dépendance de son cocontractant pour obtenir un engagement qu'il n'aurait pas souscrit et en retire un avantage manifestement excessif. La violence doit être déterminante et peut provenir d'un tiers, sauf l'abus de dépendance, qui suppose l'abus du cocontractant.
+CHECK|Contrainte ou état de dépendance
+CHECK|Caractère illégitime ou abusif
+CHECK|Avantage manifestement excessif
+CHECK|Caractère déterminant
+CHECK|Date de cessation pour la prescription
+CONCLUSION|La violence déterminante entraîne la nullité relative et peut ouvrir droit à réparation.
+REFS|C. civ., art. 1130, 1140 à 1144.
+
+FICHE|10
+TITLE|Nullité et restitutions
+QUESTION|Une condition de validité manque et il faut déterminer le type de nullité et ses effets.
+MAJOR|La nullité sanctionne le défaut d'une condition de validité du contrat. Elle est relative lorsque la règle violée protège un intérêt privé et absolue lorsqu'elle protège l'intérêt général. La nullité relative ne peut être invoquée que par la partie protégée et peut être confirmée ; la nullité absolue peut être demandée par toute personne justifiant d'un intérêt ainsi que par le ministère public. L'annulation anéantit rétroactivement le contrat et entraîne des restitutions selon les articles 1352 et suivants. La restitution d'une chose s'effectue en nature ou, si elle est impossible, en valeur ; celle d'un service s'effectue en valeur. Des dommages et intérêts peuvent s'ajouter dans les conditions de la responsabilité extracontractuelle.
+CHECK|Intérêt protégé par la règle violée
+CHECK|Qualité pour agir
+CHECK|Prescription et éventuelle confirmation
+CHECK|Nature des prestations à restituer
+CHECK|Bonne ou mauvaise foi
+CONCLUSION|Le contrat annulé est rétroactivement anéanti ; les parties doivent être remises dans l’état antérieur selon le régime des restitutions.
+REFS|C. civ., art. 1178 à 1185 et 1352 à 1352-9.
+
+FICHE|11
+TITLE|Imprévision
+QUESTION|Un changement imprévisible rend l’exécution excessivement onéreuse pour une partie.
+MAJOR|Pour les contrats relevant du droit issu de la réforme de 2016, l'article 1195 permet à la partie qui n'avait pas accepté d'assumer le risque de demander une renégociation lorsque survient un changement de circonstances imprévisible lors de la conclusion et rendant l'exécution excessivement onéreuse. Pendant la renégociation, elle doit continuer à exécuter ses obligations. En cas d'échec, les parties peuvent convenir de la résolution ou demander ensemble l'adaptation du contrat. À défaut d'accord dans un délai raisonnable, une partie peut saisir le juge, qui peut réviser le contrat ou y mettre fin. Le texte n'est pas d'ordre public et peut être aménagé ou écarté.
+CHECK|Date du contrat
+CHECK|Imprévisibilité du changement
+CHECK|Exécution excessivement onéreuse
+CHECK|Absence d’acceptation du risque
+CHECK|Respect de la phase de renégociation
+CONCLUSION|Si les conditions de l’article 1195 sont réunies et que la renégociation échoue, le juge peut adapter le contrat ou y mettre fin.
+REFS|C. civ., art. 1195.
+
+FICHE|12
+TITLE|Sanctions de l’inexécution contractuelle
+QUESTION|Un créancier cherche le remède adapté à une inexécution totale, partielle ou tardive.
+MAJOR|La partie envers laquelle l'engagement n'a pas été exécuté ou l'a été imparfaitement peut, selon les conditions légales, refuser ou suspendre sa propre exécution, poursuivre l'exécution forcée en nature, obtenir une réduction du prix, provoquer la résolution du contrat ou demander réparation. Les sanctions compatibles peuvent être cumulées, mais les dommages et intérêts peuvent toujours s'y ajouter. Une mise en demeure est en principe nécessaire pour les sanctions qui supposent que le débiteur soit en retard, sauf inexécution définitive ou exceptions légales. Le choix doit respecter la bonne foi et la proportionnalité propres à chaque remède.
+CHECK|Nature et gravité de l’inexécution
+CHECK|Mise en demeure
+CHECK|Possibilité et coût de l’exécution forcée
+CHECK|Gravité suffisante pour la résolution
+CHECK|Compatibilité des sanctions
+CONCLUSION|Le créancier doit choisir le ou les remèdes adaptés à la gravité de l’inexécution et à l’objectif poursuivi.
+REFS|C. civ., art. 1217 à 1231-7.
+
+FICHE|13
+TITLE|Responsabilité contractuelle
+QUESTION|Le créancier demande des dommages et intérêts en raison d’une inexécution.
+MAJOR|La responsabilité contractuelle suppose un contrat valable entre la victime et le responsable, l'inexécution d'une obligation contractuelle, un dommage réparable et un lien de causalité. Le débiteur peut s'exonérer en établissant un cas de force majeure, caractérisé par un événement échappant à son contrôle, imprévisible lors de la conclusion et dont les effets ne peuvent être évités par des mesures appropriées. Seuls les dommages prévus ou prévisibles lors du contrat sont réparables, sauf faute lourde ou dolosive ; la réparation doit correspondre à la suite immédiate et directe de l'inexécution. Les clauses limitatives sont écartées lorsqu'elles privent de sa substance l'obligation essentielle ou dans les autres cas prévus par la loi.
+CHECK|Obligation contractuelle violée
+CHECK|Nature de l’obligation et preuve
+CHECK|Dommage certain et prévisible
+CHECK|Lien causal
+CHECK|Force majeure ou clause limitative
+CONCLUSION|À défaut d’exonération, le débiteur doit réparer les conséquences directes et prévisibles de l’inexécution.
+REFS|C. civ., art. 1218, 1231-1 à 1231-7, 1170.
+
+FICHE|14
+TITLE|Preuve d’un acte juridique
+QUESTION|Une partie doit prouver un contrat ou un engagement civil dépassant le seuil légal.
+MAJOR|Celui qui réclame l'exécution d'une obligation doit la prouver, tandis que celui qui se prétend libéré doit justifier le paiement ou le fait extinctif. Les actes juridiques portant sur une somme ou une valeur excédant le seuil réglementaire doivent
