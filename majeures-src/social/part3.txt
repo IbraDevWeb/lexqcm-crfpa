@@ -1,0 +1,39 @@
+es mesures de protection nécessaires.
+REFS|CSS, art. L. 411-1 et L. 452-1 et s.
+
+FICHE|15
+TITLE|Usage d’entreprise et dénonciation
+QUESTION|L’employeur supprime un avantage accordé de manière répétée aux salariés.
+MAJOR|Un usage d'entreprise résulte d'un avantage présentant les caractères de généralité, de constance et de fixité. Il s'impose à l'employeur tant qu'il n'a pas été régulièrement dénoncé ou remplacé. La dénonciation suppose une information individuelle des salariés concernés, une information des représentants du personnel et le respect d'un délai de prévenance suffisant pour permettre d'éventuelles négociations. Elle n'a pas à être motivée, mais elle ne peut produire d'effet rétroactif. Un avantage incorporé au contrat ne peut être supprimé unilatéralement par la seule dénonciation de l'usage.
+CHECK|Généralité
+CHECK|Constance
+CHECK|Fixité
+CHECK|Éventuelle contractualisation
+CHECK|Information des salariés et du CSE
+CHECK|Délai suffisant
+CONCLUSION|À défaut de dénonciation régulière, l’usage continue de s’imposer à l’employeur.
+REFS|Jurisprudence sociale constante sur les usages d’entreprise.
+
+FICHE|16
+TITLE|Articulation accord de branche, accord d’entreprise et contrat
+QUESTION|Plusieurs normes collectives ou contractuelles prévoient des règles différentes.
+MAJOR|L'articulation des normes collectives dépend du domaine concerné. Dans les matières réservées à la branche, l'accord de branche prévaut sur l'accord d'entreprise sauf garanties au moins équivalentes. Dans les matières où la branche peut verrouiller, sa primauté dépend de l'existence d'une clause de verrouillage et de l'équivalence des garanties. Dans les autres matières, l'accord d'entreprise prévaut, qu'il soit antérieur ou postérieur. Le contrat de travail ne peut être modifié sans l'accord du salarié, sauf mécanismes légaux spécifiques permettant à un accord collectif de se substituer à certaines clauses sous conditions.
+CHECK|Bloc de négociation concerné
+CHECK|Date et champ des accords
+CHECK|Clause de verrouillage
+CHECK|Garantie au moins équivalente
+CHECK|Clause contractuelle plus favorable ou modification imposée par la loi
+CONCLUSION|La norme applicable ne se déduit pas d’un simple principe de faveur : il faut identifier le bloc légal et vérifier l’équivalence des garanties.
+REFS|C. trav., art. L. 2253-1 à L. 2253-3.
+
+FICHE|17
+TITLE|Action en justice d’un syndicat
+QUESTION|Un syndicat agit pour défendre un intérêt collectif ou les droits individuels de salariés.
+MAJOR|Les syndicats professionnels peuvent agir devant toutes les juridictions pour défendre l'intérêt collectif de la profession qu'ils représentent. L'action suppose une atteinte, directe ou indirecte, à cet intérêt collectif, distinct de la somme des intérêts individuels. Dans les hypothèses prévues par la loi, un syndicat peut également exercer une action de substitution au nom d'un salarié, sous réserve de l'en informer et de l'absence d'opposition de celui-ci. Il doit justifier de sa capacité et, selon l'action, de son champ professionnel et géographique.
+CHECK|Objet statutaire et champ du syndicat
+CHECK|Atteinte à l’intérêt collectif
+CHECK|Action propre ou de substitution
+CHECK|Information et opposition du salarié
+CHECK|Qualité et représentativité si exigées
+CONCLUSION|L’action est recevable si elle tend à réparer une atteinte à l’intérêt collectif de la profession ou relève d’un cas légal de substitution.
+REFS|C. trav., art. L. 2132-3 et textes spéciaux.
