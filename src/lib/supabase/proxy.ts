@@ -24,19 +24,20 @@ export async function updateSession(request: NextRequest) {
     },
   })
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { claims } } = await supabase.auth.getClaims()
+  const authenticated = Boolean(claims?.sub)
   const pathname = request.nextUrl.pathname
   const isProtected = protectedPrefixes.some((prefix) => pathname.startsWith(prefix))
   const isAuthPage = authPrefixes.some((prefix) => pathname.startsWith(prefix))
 
-  if (isProtected && !user) {
+  if (isProtected && !authenticated) {
     const loginUrl = request.nextUrl.clone()
     loginUrl.pathname = '/auth/login'
     loginUrl.searchParams.set('next', pathname)
     return NextResponse.redirect(loginUrl)
   }
 
-  if (isAuthPage && user) {
+  if (isAuthPage && authenticated) {
     const dashboardUrl = request.nextUrl.clone()
     dashboardUrl.pathname = '/dashboard'
     dashboardUrl.search = ''
