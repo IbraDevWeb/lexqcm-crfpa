@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#171713" />
   <meta name="color-scheme" content="light" />
-  <title>LexQCM — CRFPA V1.2</title>
+  <title>LexQCM — CRFPA</title>
   <style>
 :root{
  --paper:#f2eee4;--paper-2:#ebe5d8;--panel:#fffdf7;--ink:#1a1916;--muted:#6d675d;--line:#cfc6b5;
@@ -35,6 +35,50 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 @media print{.sidebar,.mobile-head,.sidebar-backdrop,.btn,.quiz-actions{display:none!important}.app{display:block}.main{padding:0}.card{box-shadow:none}.scenario-sticky{position:static;max-height:none;overflow:visible}}
 
 </style>
+
+  <!-- PWA / installation mobile -->
+  <meta name="application-name" content="LexQCM CRFPA" />
+  <meta name="description" content="Banque de QCM, QRM et dossiers progressifs pour préparer le CRFPA, utilisable hors connexion." />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="LexQCM" />
+  <meta name="format-detection" content="telephone=no" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png" />
+  <style id="pwa-enhancements">
+    html{-webkit-tap-highlight-color:transparent}
+    button,.btn,.option{touch-action:manipulation}
+    body{padding-bottom:env(safe-area-inset-bottom)}
+    .pwa-status{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:80;display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid var(--line-dark);background:rgba(255,253,247,.94);backdrop-filter:blur(10px);box-shadow:var(--shadow);font-size:11px;color:var(--muted);transition:.2s ease;pointer-events:none}
+    .pwa-status-dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px rgba(29,107,80,.12)}
+    .pwa-status.offline .pwa-status-dot{background:var(--warn);box-shadow:0 0 0 3px rgba(154,97,24,.12)}
+    .pwa-status.offline{color:#6e4815}
+    .pwa-install{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translate(-50%,18px);z-index:95;width:min(620px,calc(100vw - 28px));background:#171713;color:#f8f3e9;border:1px solid #4a463d;box-shadow:0 22px 60px rgba(20,18,14,.32);opacity:0;visibility:hidden;transition:opacity .18s ease,transform .18s ease,visibility .18s}
+    .pwa-install.show{opacity:1;visibility:visible;transform:translate(-50%,0)}
+    .pwa-install-inner{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:13px}
+    .pwa-install-logo{width:44px;height:44px;border:1px solid #746e62;background:#8d2637;display:grid;place-items:center;font:700 28px/1 Georgia,serif;color:#fff8ed}
+    .pwa-install-copy b{display:block;font:700 15px/1.25 Georgia,serif}.pwa-install-copy span{display:block;color:#bdb6aa;font-size:11px;margin-top:3px;line-height:1.35}
+    .pwa-install-actions{display:flex;gap:7px}.pwa-install .pwa-primary,.pwa-install .pwa-dismiss{min-height:38px;border:1px solid #6a6256;padding:8px 11px;font:700 11px/1 var(--sans)}
+    .pwa-install .pwa-primary{background:#f4efe5;color:#221f1a;border-color:#f4efe5}.pwa-install .pwa-dismiss{background:transparent;color:#d5cec1}
+    .pwa-ios-help{display:none;padding:0 13px 13px;color:#d5cec1;font-size:12px;border-top:1px solid #37342e;margin-top:0;padding-top:11px}.pwa-install.ios-help .pwa-ios-help{display:block}
+    .pwa-update{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translateX(-50%);z-index:100;background:#fffdf7;border:1px solid var(--line-dark);box-shadow:var(--shadow-strong);padding:9px 11px;display:none;align-items:center;gap:10px;font-size:12px}.pwa-update.show{display:flex}.pwa-update button{border:0;background:var(--accent);color:#fff;padding:7px 10px;font-weight:800}
+    @media (display-mode:standalone){
+      .pwa-status{bottom:calc(10px + env(safe-area-inset-bottom))}
+    }
+    @media (display-mode:standalone) and (max-width:900px){
+      .mobile-head{padding-top:calc(10px + env(safe-area-inset-top))!important;min-height:calc(60px + env(safe-area-inset-top))}
+      .sidebar{padding-top:calc(28px + env(safe-area-inset-top))!important;padding-bottom:calc(22px + env(safe-area-inset-bottom))!important}
+      .main{padding-bottom:calc(90px + env(safe-area-inset-bottom))!important}
+    }
+    @media (max-width:620px){
+      .pwa-install-inner{grid-template-columns:40px 1fr}.pwa-install-logo{width:40px;height:40px}.pwa-install-actions{grid-column:1/-1}.pwa-install-actions button{flex:1}.pwa-status{right:10px;bottom:calc(10px + env(safe-area-inset-bottom));font-size:10px}
+    }
+    @media (prefers-reduced-motion:reduce){.pwa-install,.pwa-status{transition:none}}
+  </style>
+
 </head>
 <body>
 <a class="skip-link" href="#dashboard">Aller au contenu</a>
@@ -310,5 +354,132 @@ updateSide();renderDashboard();
 })();
 
 </script>
+
+<div id="pwaStatus" class="pwa-status" aria-live="polite"><i class="pwa-status-dot"></i><span>Préparation hors-ligne…</span></div>
+<div id="pwaInstall" class="pwa-install" role="dialog" aria-label="Installer LexQCM">
+  <div class="pwa-install-inner">
+    <div class="pwa-install-logo">§</div>
+    <div class="pwa-install-copy"><b>Installer LexQCM</b><span>Une vraie app sur l’écran d’accueil, avec révisions disponibles hors connexion.</span></div>
+    <div class="pwa-install-actions"><button id="pwaInstallBtn" class="pwa-primary">Installer</button><button id="pwaDismissBtn" class="pwa-dismiss">Plus tard</button></div>
+  </div>
+  <div class="pwa-ios-help"><b>Sur iPhone / iPad :</b> touche le bouton Partager de Safari, puis <b>« Sur l’écran d’accueil »</b>. Ouvre ensuite LexQCM une première fois avec Internet pour finaliser le cache hors ligne.</div>
+</div>
+<div id="pwaUpdate" class="pwa-update" aria-live="polite"><span>Une nouvelle version de LexQCM est prête.</span><button id="pwaUpdateBtn">Mettre à jour</button></div>
+<script id="pwa-bootstrap">
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const installBox = $('pwaInstall');
+  const installBtn = $('pwaInstallBtn');
+  const dismissBtn = $('pwaDismissBtn');
+  const status = $('pwaStatus');
+  const updateBox = $('pwaUpdate');
+  const updateBtn = $('pwaUpdateBtn');
+  const standalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const isiOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  let deferredPrompt = null;
+  let swReg = null;
+  let offlineReady = false;
+
+  function setConnectivity() {
+    const online = navigator.onLine;
+    status?.classList.toggle('offline', !online);
+    const label = status?.querySelector('span');
+    if (label) label.textContent = online ? (offlineReady ? 'Hors-ligne prêt' : 'Préparation hors-ligne…') : 'Mode hors connexion';
+  }
+  addEventListener('online', setConnectivity);
+  addEventListener('offline', setConnectivity);
+  setConnectivity();
+
+  function canShowInstall() {
+    const dismissed = Number(localStorage.getItem('lexqcm_pwa_install_dismissed') || 0);
+    return !standalone() && (!dismissed || Date.now() - dismissed > 3 * 24 * 60 * 60 * 1000);
+  }
+  function showInstall(kind='native') {
+    if (!canShowInstall()) return;
+    installBox?.classList.add('show');
+    installBox?.classList.toggle('ios-help', kind === 'ios');
+    if (installBtn) installBtn.textContent = kind === 'ios' ? 'Voir comment' : 'Installer';
+  }
+  function hideInstall(persist=false) {
+    installBox?.classList.remove('show','ios-help');
+    if (persist) localStorage.setItem('lexqcm_pwa_install_dismissed', String(Date.now()));
+  }
+
+  addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstall('native');
+  });
+  addEventListener('appinstalled', async () => {
+    deferredPrompt = null;
+    hideInstall(false);
+    try { await navigator.storage?.persist?.(); } catch {}
+  });
+
+  installBtn?.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      try { await deferredPrompt.userChoice; } catch {}
+      deferredPrompt = null;
+      hideInstall(false);
+      try { await navigator.storage?.persist?.(); } catch {}
+      return;
+    }
+    if (isiOS) {
+      installBox?.classList.add('ios-help');
+      installBtn.textContent = 'Instructions ci-dessous';
+      return;
+    }
+  });
+  dismissBtn?.addEventListener('click', () => hideInstall(true));
+
+  if ('serviceWorker' in navigator) {
+    addEventListener('load', async () => {
+      try {
+        swReg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+        await navigator.serviceWorker.ready;
+        offlineReady = true;
+        setConnectivity();
+        status?.setAttribute('title', 'Les QCM et dossiers sont mis en cache sur cet appareil.');
+        if (swReg.waiting) updateBox?.classList.add('show');
+        swReg.addEventListener('updatefound', () => {
+          const worker = swReg.installing;
+          worker?.addEventListener('statechange', () => {
+            if (worker.state === 'installed' && navigator.serviceWorker.controller) updateBox?.classList.add('show');
+          });
+        });
+      } catch (err) {
+        console.warn('LexQCM: service worker indisponible', err);
+        const label = status?.querySelector('span');
+        if (label) label.textContent = navigator.onLine ? 'Cache hors-ligne indisponible' : 'Hors connexion';
+      }
+    });
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshing) return;
+      refreshing = true;
+      location.reload();
+    });
+  } else {
+    const label = status?.querySelector('span');
+    if (label) label.textContent = 'Navigateur sans cache PWA';
+  }
+
+  updateBtn?.addEventListener('click', () => {
+    swReg?.waiting?.postMessage({ type: 'SKIP_WAITING' });
+  });
+
+  // Safari iOS n'émet pas beforeinstallprompt : affichage d'une aide discrète.
+  if (isiOS && canShowInstall()) setTimeout(() => showInstall('ios'), 1600);
+
+  // Raccourcis du manifeste : ?view=practice, ?view=cases, ?view=errors.
+  const requestedView = new URL(location.href).searchParams.get('view');
+  if (requestedView && ['dashboard','practice','cases','errors','stats','bank','updates','quality','settings'].includes(requestedView)) {
+    setTimeout(() => window.Lex?.navigate?.(requestedView), 0);
+  }
+})();
+</script>
+
 </body>
 </html>
