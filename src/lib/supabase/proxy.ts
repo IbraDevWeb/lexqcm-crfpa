@@ -24,20 +24,22 @@ export async function updateSession(request: NextRequest) {
     },
   })
 
-  const { data: claims } = await supabase.auth.getClaims()
-  const authenticated = Boolean(claims?.sub)
+  // getUser() performs a server-side Auth request and returns a fresh,
+  // validated user record. This is safe for authorization checks and
+  // avoids trusting an unverified cookie session.
+  const { data: { user } } = await supabase.auth.getUser()
   const pathname = request.nextUrl.pathname
   const isProtected = protectedPrefixes.some((prefix) => pathname.startsWith(prefix))
   const isAuthPage = authPrefixes.some((prefix) => pathname.startsWith(prefix))
 
-  if (isProtected && !authenticated) {
+  if (isProtected && !user) {
     const loginUrl = request.nextUrl.clone()
     loginUrl.pathname = '/auth/login'
     loginUrl.searchParams.set('next', pathname)
     return NextResponse.redirect(loginUrl)
   }
 
-  if (isAuthPage && authenticated) {
+  if (isAuthPage && user) {
     const dashboardUrl = request.nextUrl.clone()
     dashboardUrl.pathname = '/dashboard'
     dashboardUrl.search = ''
