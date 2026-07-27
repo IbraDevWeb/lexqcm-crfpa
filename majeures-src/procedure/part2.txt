@@ -1,0 +1,89 @@
+é d'office sans avoir préalablement invité les parties à présenter leurs observations, sauf exception légale. La violation du contradictoire affecte la régularité de la décision ou de l'acte concerné.
+CHECK|Communication en temps utile
+CHECK|Possibilité effective de répondre
+CHECK|Moyen relevé d’office
+CHECK|Pièce ou expertise discutée
+CHECK|Incidence procédurale
+CONCLUSION|La décision ne peut se fonder sur un élément qui n’a pas été soumis à la discussion contradictoire des parties.
+REFS|CPC, art. 14 à 16.
+
+FICHE|09
+TITLE|Fin de non-recevoir
+QUESTION|Une prétention est contestée sans discussion de son bien-fondé.
+MAJOR|La fin de non-recevoir tend à faire déclarer l'adversaire irrecevable en sa demande sans examen au fond, pour défaut de droit d'agir, notamment défaut de qualité, défaut d'intérêt, prescription, délai préfix ou chose jugée. Elle peut en principe être proposée en tout état de cause, sauf possibilité pour le juge de condamner à des dommages et intérêts celui qui s'est abstenu, dans une intention dilatoire, de la soulever plus tôt. Les fins de non-recevoir d'ordre public doivent être relevées d'office dans les cas prévus et peuvent l'être dans d'autres hypothèses. Elles peuvent être régularisées avant que le juge statue lorsque leur cause a disparu.
+CHECK|Obstacle au droit d’agir
+CHECK|Ordre public ou intérêt privé
+CHECK|Moment de l’invocation
+CHECK|Régularisation
+CHECK|Compétence du juge saisi
+CONCLUSION|Si la fin de non-recevoir est fondée et non régularisée, la demande est rejetée comme irrecevable sans examen du fond.
+REFS|CPC, art. 122 à 126.
+
+FICHE|10
+TITLE|Pouvoirs du juge de la mise en état
+QUESTION|Un incident survient après sa désignation dans une procédure écrite devant le tribunal judiciaire.
+MAJOR|À compter de sa désignation et jusqu'à son dessaisissement, le juge de la mise en état exerce les pouvoirs exclusifs que le Code lui attribue. Il statue notamment sur les exceptions de procédure et les incidents mettant fin à l'instance, et, dans le champ prévu par les textes, sur les fins de non-recevoir. Les parties doivent lui soumettre ces moyens dans les délais et selon les règles de concentration applicables ; une question de fond nécessaire peut, selon le régime en vigueur, être tranchée ou renvoyée dans les conditions prévues. Ses ordonnances ont l'autorité de la chose jugée au principal lorsqu'elles statuent sur certains incidents et peuvent faire l'objet d'un appel immédiat dans les cas limitativement énumérés.
+CHECK|Date de désignation/dessaisissement
+CHECK|Nature de l’incident
+CHECK|Compétence exclusive
+CHECK|Concentration des moyens
+CHECK|Voie de recours immédiate ou avec le jugement
+CONCLUSION|L’incident doit être porté devant le juge de la mise en état lorsqu’il entre dans ses pouvoirs exclusifs, sous peine d’irrecevabilité ultérieure.
+REFS|CPC, art. 789, 794 et 795.
+
+FICHE|11
+TITLE|Interruption de l’instance
+QUESTION|Un événement affecte la capacité, la représentation ou la situation d’une partie en cours d’instance.
+MAJOR|L'interruption de l'instance suspend le cours de la procédure lorsqu'intervient l'un des événements prévus par la loi, notamment le décès dans les cas où l'action est transmissible, la cessation de fonctions du représentant légal ou la perte de capacité d'ester. Certains événements interrompent de plein droit, tandis que d'autres ne produisent effet qu'à compter de leur notification à l'autre partie. L'interruption ne dessaisit pas le juge mais rend non avenus les actes accomplis après son effet, sauf confirmation. L'instance reprend par les diligences prévues, volontairement ou par citation.
+CHECK|Événement interruptif
+CHECK|Caractère automatique ou conditionnel
+CHECK|Date de notification
+CHECK|Ouverture des débats
+CHECK|Actes accomplis après interruption
+CHECK|Reprise régulière
+CONCLUSION|Si l’événement a valablement interrompu l’instance, les actes postérieurs sont privés d’effet jusqu’à une reprise régulière.
+REFS|CPC, art. 369 à 376.
+
+FICHE|12
+TITLE|Recevabilité et loyauté de la preuve civile
+QUESTION|Une partie produit un enregistrement clandestin ou une preuve portant atteinte à un droit.
+MAJOR|Le droit à la preuve peut justifier la production d'un élément portant atteinte à d'autres droits lorsque cette production est indispensable à l'exercice du droit à la preuve et que l'atteinte est strictement proportionnée au but poursuivi. Le juge doit mettre en balance les intérêts en présence, rechercher si la preuve pouvait être obtenue autrement et apprécier l'étendue de l'atteinte. L'illicéité ou la déloyauté d'un moyen de preuve n'entraîne donc pas automatiquement son exclusion en matière civile, mais impose un contrôle concret de nécessité et de proportionnalité.
+CHECK|Droit invoqué
+CHECK|Caractère indispensable de la pièce
+CHECK|Existence de moyens moins attentatoires
+CHECK|Gravité et étendue de l’atteinte
+CHECK|Débat contradictoire
+CONCLUSION|La preuve litigieuse n’est admissible que si elle est indispensable et si l’atteinte causée demeure proportionnée.
+REFS|Ass. plén., 22 déc. 2023, n° 20-20.648 et 21-11.330 ; art. 6 CEDH.
+
+FICHE|13
+TITLE|Autorité de la chose jugée
+QUESTION|Une partie réintroduit une demande déjà tranchée.
+MAJOR|L'autorité de la chose jugée s'attache au dispositif de la décision dès son prononcé pour les contestations qu'il tranche. Elle fait obstacle à une nouvelle demande lorsqu'il existe une identité de parties agissant en les mêmes qualités, d'objet et de cause, sous réserve de l'évolution du litige ou de prétentions distinctes. La fin de non-recevoir tirée de la chose jugée peut être invoquée sans examen au fond de la nouvelle demande. Le juge doit interpréter le dispositif à la lumière des motifs qui en sont le soutien nécessaire, sans étendre l'autorité au-delà de ce qui a été effectivement tranché.
+CHECK|Décision juridictionnelle antérieure
+CHECK|Contenu exact du dispositif
+CHECK|Identité des parties/qualités
+CHECK|Identité d’objet
+CHECK|Identité de cause et faits nouveaux
+CONCLUSION|La nouvelle demande est irrecevable si elle reproduit entre les mêmes parties le litige déjà définitivement tranché.
+REFS|C. civ., art. 1355 ; CPC, art. 480 et 122.
+
+FICHE|14
+TITLE|Appel - délai et recevabilité
+QUESTION|Il faut vérifier si l’appel a été formé par la bonne personne et dans le délai.
+MAJOR|L'appel est ouvert à la partie qui y a intérêt, à condition de ne pas avoir renoncé au recours et que la décision soit susceptible d'appel. Le délai court en principe à compter de la notification régulière du jugement et varie selon la matière. Le recours est formé par déclaration contenant les mentions prescrites. Le délai est augmenté en raison de la distance dans les cas prévus. Un appel tardif est irrecevable ; l'irrégularité de la notification peut empêcher le délai de courir, sans faire disparaître les délais butoirs éventuellement applicables.
+CHECK|Décision appelable
+CHECK|Qualité et intérêt
+CHECK|Notification régulière
+CHECK|Durée et computation
+CHECK|Augmentation de distance
+CHECK|Mentions de la déclaration
+CONCLUSION|L’appel est recevable si la décision est susceptible de recours et si la déclaration a été formée dans le délai courant d’une notification régulière.
+REFS|CPC, art. 528 et s., 538 et s., 901 ou 933 selon la procédure.
+
+FICHE|15
+TITLE|Effet dévolutif de l’appel
+QUESTION|La cour doit déterminer quels chefs du jugement lui sont soumis.
+MAJOR|L'appel défère à la cour la connaissance des chefs du dispositif du jugement expressément critiqués et de ceux qui en dépendent, sauf lorsque l'appel tend à l'annulation du jugement ou lorsque l'objet du litige est indivisible. La déclaration d'appel et, dans le régime applicable, les premières conclusions déterminent l'étendue de la dévolution selon les textes en vigueur. La cour ne peut statuer sur un chef non dévolu. Les prétentions doivent être formulées dans le dispositif des conclusions et respecter les règles de concentration et de délais propres à la procédure d'appel.
+CHECK|Chefs expressément critiqués
+CHECK|Annula
