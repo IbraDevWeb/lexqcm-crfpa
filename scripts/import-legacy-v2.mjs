@@ -5,6 +5,7 @@ import { buildQualityReport } from './question-quality.mjs'
 
 const root = process.cwd()
 const outputDir = path.join(root, 'public', 'generated')
+const OPTION_ORDER_VERSION = 2
 const cleanQuestionSets = [
   {
     directory: 'data/procedure-civile-2026',
@@ -105,12 +106,137 @@ function richer(a, b) {
   return right.length > left.length ? right : left
 }
 
+function normalizeOption(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[’‘]/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase()
+}
+
 function validQuestion(q) {
-  return q && typeof q.id === 'string' && typeof q.subject === 'string' && typeof q.topic === 'string' && typeof q.stem === 'string' && Array.isArray(q.options) && q.options.length >= 2 && Array.isArray(q.answers) && q.answers.every((a) => Number.isInteger(a) && a >= 0 && a < q.options.length)
+  if (!q || typeof q.id !== 'string' || typeof q.subject !== 'string' || typeof q.topic !== 'string' || typeof q.stem !== 'string') return false
+  if (!Array.isArray(q.options) || q.options.length < 2 || q.options.some((option) => typeof option !== 'string' || !option.trim())) return false
+  if (new Set(q.options.map(normalizeOption)).size !== q.options.length) return false
+  if (!Array.isArray(q.answers) || q.answers.length === 0 || new Set(q.answers).size !== q.answers.length) return false
+  if (!q.answers.every((answer) => Number.isInteger(answer) && answer >= 0 && answer < q.options.length)) return false
+  if (q.type === 'single' && q.answers.length !== 1) return false
+  if (q.type === 'multiple' && q.answers.length < 2) return false
+  return true
 }
 
 function validCase(c) {
   return c && typeof c.id === 'string' && typeof c.title === 'string' && typeof c.scenario === 'string' && Array.isArray(c.questions)
+}
+
+function stableHash(value) {
+  let hash = 2166136261
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index)
+    hash = Math.imul(hash, 16777619)
+  }
+  return hash >>> 0
+}
+
+function seededRandom(seed) {
+  let state = seed >>> 0
+  return () => {
+    state = (state + 0x6D2B79F5) >>> 0
+    let value = state
+    value = Math.imul(value ^ (value >>> 15), value | 1)
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61)
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+function shuffleQuestionOptions(question, forcedCorrectPosition = null) {
+  const hasAlignedExplanations = Array.isArray(question.optionExplanations)
+    && question.optionExplanations.length === question.options.length
+  const entries = question.options.map((option, originalIndex) => ({
+    option,
+    originalIndex,
+    optionExplanation: hasAlignedExplanations ? question.optionExplanations[originalIndex] : undefined,
+  }))
+  const random = seededRandom(stableHash(`lexqcm-option-order-v${OPTION_ORDER_VERSION}:${question.id}:${question.stem}`))
+
+  for (let index = entries.length - 1; index > 0; index -= 1) {
+    const target = Math.floor(random() * (index + 1))
+    ;[entries[index], entries[target]] = [entries[target], entries[index]]
+  }
+
+  if (question.answers.length === 1 && Number.isInteger(forcedCorrectPosition)) {
+    const correctOriginalIndex = question.answers[0]
+    const currentCorrectPosition = entries.findIndex((entry) => entry.originalIndex === correctOriginalIndex)
+    if (currentCorrectPosition !== forcedCorrectPosition) {
+      ;[entries[currentCorrectPosition], entries[forcedCorrectPosition]] = [entries[forcedCorrectPosition], entries[currentCorrectPosition]]
+    }
+  }
+
+  const answerSet = new Set(question.answers)
+  const answers = entries
+    .map((entry, newIndex) => (answerSet.has(entry.originalIndex) ? newIndex : -1))
+    .filter((index) => index >= 0)
+    .sort((a, b) => a - b)
+
+  return {
+    ...question,
+    options: entries.map((entry) => entry.option),
+    answers,
+    optionExplanations: hasAlignedExplanations
+      ? entries.map((entry) => entry.optionExplanation)
+      : question.optionExplanations,
+  }
+}
+
+function randomizeOptionOrder(questions) {
+  const forcedPositions = new Map()
+  const singleAnswerGroups = new Map()
+
+  questions.forEach((question) => {
+    if (question.answers.length !== 1) return
+    const key = `${question.subject}::${question.options.length}`
+    const group = singleAnswerGroups.get(key) || []
+    group.push(question)
+    singleAnswerGroups.set(key, group)
+  })
+
+  singleAnswerGroups.forEach((group) => {
+    group
+      .slice()
+      .sort((left, right) => {
+        const hashDifference = stableHash(`balance:${left.id}`) - stableHash(`balance:${right.id}`)
+        return hashDifference || left.id.localeCompare(right.id, 'fr')
+      })
+      .forEach((question, index) => {
+        forcedPositions.set(question.id, index % question.options.length)
+      })
+  })
+
+  return questions.map((question) => shuffleQuestionOptions(question, forcedPositions.get(question.id)))
+}
+
+function answerPositionStats(questions) {
+  const bySubject = {}
+  let singleAnswerCount = 0
+  let multipleAnswerCount = 0
+
+  questions.forEach((question) => {
+    const subject = question.subject || 'Matière inconnue'
+    bySubject[subject] ||= { singleAnswerCount: 0, multipleAnswerCount: 0, positions: {} }
+    if (question.answers.length === 1) {
+      singleAnswerCount += 1
+      bySubject[subject].singleAnswerCount += 1
+      const position = String.fromCharCode(65 + question.answers[0])
+      bySubject[subject].positions[position] = (bySubject[subject].positions[position] || 0) + 1
+    } else {
+      multipleAnswerCount += 1
+      bySubject[subject].multipleAnswerCount += 1
+    }
+  })
+
+  return { singleAnswerCount, multipleAnswerCount, bySubject }
 }
 
 async function main() {
@@ -142,10 +268,11 @@ async function main() {
     .map((q) => [q.id, q])).values()]
 
   if (structurallyValid.length !== expectedQuestionCount) {
-    throw new Error(`Structure invalide ou identifiants dupliqués : ${structurallyValid.length}/${expectedQuestionCount} questions valides.`)
+    throw new Error(`Structure invalide, options dupliquées ou identifiants dupliqués : ${structurallyValid.length}/${expectedQuestionCount} questions valides.`)
   }
 
-  const { kept: qualityQuestions, excluded, report: qualityReport } = buildQualityReport(structurallyValid)
+  const { kept, excluded, report: qualityReport } = buildQualityReport(structurallyValid)
+  const qualityQuestions = randomizeOptionOrder(kept)
   const uniqueCases = [...new Map(cases.filter(validCase).map((c) => [c.id, c])).values()]
 
   if (qualityQuestions.length !== expectedQuestionCount || excluded.length !== 0) {
@@ -166,16 +293,23 @@ async function main() {
     counts[question.subject] = (counts[question.subject] || 0) + 1
     return counts
   }, {})
+  const positionStats = answerPositionStats(qualityQuestions)
 
   await fs.writeFile(path.join(outputDir, 'questions.json'), JSON.stringify(qualityQuestions))
   await fs.writeFile(path.join(outputDir, 'cases.json'), JSON.stringify(uniqueCases))
-  await fs.writeFile(path.join(outputDir, 'quality-report.json'), JSON.stringify(qualityReport, null, 2))
+  await fs.writeFile(path.join(outputDir, 'quality-report.json'), JSON.stringify({
+    ...qualityReport,
+    optionOrderVersion: OPTION_ORDER_VERSION,
+    answerPositionStats: positionStats,
+  }, null, 2))
   await fs.writeFile(path.join(outputDir, 'questions-editorial-review.json'), JSON.stringify([], null, 2))
   await fs.writeFile(path.join(outputDir, 'meta.json'), JSON.stringify({
     generatedAt: new Date().toISOString(),
     sourceQuestionCount: expectedQuestionCount,
     questionCount: expectedQuestionCount,
     editorialReviewCount: 0,
+    optionOrderVersion: OPTION_ORDER_VERSION,
+    answerPositionStats: positionStats,
     procedureCivileCorrectionQuestionCount: countsBySubject['Procédure civile'],
     procedureCivile2026QuestionCount: countsBySet['PC26-CORR-'],
     procedureCivile2025QuestionCount: countsBySet['PC25-CORR-'],
@@ -192,6 +326,10 @@ async function main() {
 
   console.log(`[LexQCM] Base QCM saine : ${qualityQuestions.length} questions, aucune question legacy.`)
   cleanQuestionSets.forEach((set) => console.log(`[LexQCM] ${countsBySet[set.prefix]} questions — ${set.subject} (${set.prefix}).`))
+  console.log(`[LexQCM] Ordre des réponses v${OPTION_ORDER_VERSION} : positions mélangées, stables et équilibrées.`)
+  Object.entries(positionStats.bySubject).forEach(([subject, stats]) => {
+    console.log(`[LexQCM] ${subject} — réponses uniques : ${JSON.stringify(stats.positions)}.`)
+  })
   console.log(`[LexQCM] ${uniqueCases.length} dossiers progressifs conservés indépendamment de la banque QCM.`)
 }
 
