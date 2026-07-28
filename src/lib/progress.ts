@@ -41,7 +41,7 @@ export type CaseHistoryEntry = {
 }
 
 export type ProgressState = {
-  version: 4
+  version: 5
   answered: number
   correct: number
   favorites: string[]
@@ -54,7 +54,7 @@ export type ProgressState = {
 }
 
 export const emptyProgress = (): ProgressState => ({
-  version: 4,
+  version: 5,
   answered: 0,
   correct: 0,
   favorites: [],
@@ -196,14 +196,27 @@ export function completeCase(input: ProgressState, caseId: string, scorePercent:
 export function normalizeProgress(value: unknown): ProgressState {
   if (!value || typeof value !== 'object') return emptyProgress()
   const raw = value as Partial<ProgressState> & { version?: number }
+  const caseStats = raw.caseStats && typeof raw.caseStats === 'object' ? raw.caseStats : {}
+  const caseHistory = Array.isArray(raw.caseHistory) ? raw.caseHistory.slice(-3000) : []
+
+  // Migration V5 : remise à zéro de toute progression liée à l'ancienne banque QCM.
+  // Les dossiers progressifs restent indépendants et sont donc conservés.
+  if (raw.version !== 5) {
+    return {
+      ...emptyProgress(),
+      caseStats,
+      caseHistory,
+    }
+  }
+
   return {
     ...emptyProgress(),
     ...raw,
-    version: 4,
+    version: 5,
     favorites: Array.isArray(raw.favorites) ? raw.favorites.filter((x): x is string => typeof x === 'string') : [],
     questionStats: raw.questionStats && typeof raw.questionStats === 'object' ? raw.questionStats : {},
     history: Array.isArray(raw.history) ? raw.history.slice(-4000) : [],
-    caseStats: raw.caseStats && typeof raw.caseStats === 'object' ? raw.caseStats : {},
-    caseHistory: Array.isArray(raw.caseHistory) ? raw.caseHistory.slice(-3000) : [],
+    caseStats,
+    caseHistory,
   }
 }
