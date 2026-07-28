@@ -53,7 +53,7 @@ function balancedSample(items: LexQuestion[], count: number) {
       groups.delete(subject)
       subjects.splice(cursor % subjects.length, 1)
       if (!subjects.length) break
-      cursor = cursor % subjects.length
+      cursor %= subjects.length
     } else cursor += 1
   }
   return result
@@ -80,6 +80,7 @@ export function QuizClient() {
   const requestedMode = searchParams.get('mode') || ''
   const requestedPreset = searchParams.get('preset') || ''
   const { progress, persist, loading: progressLoading, syncing, online, error: progressError } = useProgress()
+
   const [questions, setQuestions] = useState<LexQuestion[]>([])
   const [loadingBank, setLoadingBank] = useState(true)
   const [loadError, setLoadError] = useState('')
@@ -130,10 +131,7 @@ export function QuizClient() {
     return [...counts.entries()].map(([value, topicCount]) => ({ value, count: topicCount })).sort((a, b) => a.value.localeCompare(b.value, 'fr'))
   }, [questions, subject])
 
-  const dueQuestions = useMemo(() => questions.filter((question) => {
-    const stat = progress.questionStats[question.id]
-    return Boolean(stat?.seen) && isDue(progress, question.id)
-  }), [questions, progress])
+  const dueQuestions = useMemo(() => questions.filter((question) => Boolean(progress.questionStats[question.id]?.seen) && isDue(progress, question.id)), [questions, progress])
   const errorIds = useMemo(() => new Set(Object.entries(progress.questionStats).filter(([, stat]) => stat.wrong > 0 && (stat.correct === 0 || stat.wrong >= stat.correct)).map(([id]) => id)), [progress.questionStats])
   const favoriteIds = useMemo(() => new Set(progress.favorites), [progress.favorites])
 
@@ -175,8 +173,7 @@ export function QuizClient() {
     setSelected([])
     setValidated(false)
     const target = overrideCount ?? count
-    const items = shuffle(pool).slice(0, Math.min(target, pool.length))
-    setPracticeSession({ items, index: 0, score: 0, answers: [], startedAt: Date.now() })
+    setPracticeSession({ items: shuffle(pool).slice(0, Math.min(target, pool.length)), index: 0, score: 0, answers: [], startedAt: Date.now() })
   }
 
   function startExam(explicitPool = basePool, overrideCount = count) {
@@ -211,8 +208,8 @@ export function QuizClient() {
   function toggle(index: number) {
     if (!practiceSession || validated) return
     const question = practiceSession.items[practiceSession.index]
-    if ((question.type ?? (question.answers.length > 1 ? 'multiple' : 'single')) === 'single') setSelected([index])
-    else setSelected((current) => current.includes(index) ? current.filter((item) => item !== index) : [...current, index])
+    const single = (question.type ?? (question.answers.length > 1 ? 'multiple' : 'single')) === 'single'
+    setSelected((current) => single ? [index] : current.includes(index) ? current.filter((item) => item !== index) : [...current, index])
   }
 
   function validate() {
@@ -258,7 +255,6 @@ export function QuizClient() {
 
   if (loadingBank || progressLoading) return <div className="card loadingCard"><div className="spinner" /> Chargement de la banque…</div>
   if (loadError || progressError) return <div className="error">{loadError || progressError}</div>
-
   if (examItems) return <ExamSession questions={examItems} progress={progress} persist={persist} onExit={() => setExamItems(null)} />
 
   if (result) {
@@ -271,7 +267,7 @@ export function QuizClient() {
     const poolCount = makePool(requestedMode).length
     const selectedLabel = topicsSelected.length ? `${topicsSelected.length} thème${topicsSelected.length > 1 ? 's' : ''} · ` : ''
     return <>
-      <div className="top trainingTop"><div><span className="pageKicker">CENTRE D’ENTRAÎNEMENT</span><h1>Choisis ton format de travail</h1><p>Commence immédiatement avec un format prédéfini ou compose une session sur mesure dans les 2 349 QCM/QRM.</p></div><span className="badge"><span className="offlineDot" style={{ background: online ? '#059669' : '#d97706' }} />{online ? (syncing ? 'Synchronisation…' : 'Cloud synchronisé') : 'Mode hors ligne'}</span></div>
+      <div className="top trainingTop"><div><span className="pageKicker">CENTRE D’ENTRAÎNEMENT</span><h1>Choisis ton format de travail</h1><p>Commence immédiatement avec un format prédéfini ou compose une session sur mesure dans {questions.length.toLocaleString('fr-FR')} QCM/QRM utiles.</p></div><span className="badge"><span className="offlineDot" style={{ background: online ? '#059669' : '#d97706' }} />{online ? (syncing ? 'Synchronisation…' : 'Cloud synchronisé') : 'Mode hors ligne'}</span></div>
 
       <section className="trainingPresetGrid">
         <button className="trainingPresetCard quick" onClick={() => launchPreset('quick')}><span className="presetIcon">⚡</span><div><span>SÉRIE RAPIDE</span><h2>10 questions pour avancer maintenant</h2><p>Questions mélangées, correction immédiate et mise à jour de la répétition espacée.</p></div><strong>≈ 8 min</strong></button>
