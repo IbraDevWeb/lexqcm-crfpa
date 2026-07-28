@@ -1,5 +1,5 @@
-const CACHE = 'lexqcm-next-v2-2'
-const CORE = ['/offline', '/manifest.webmanifest', '/icon.svg', '/generated/questions.json', '/generated/cases.json', '/generated/meta.json']
+const CACHE = 'lexqcm-next-v2-3'
+const CORE = ['/offline', '/manifest.webmanifest', '/icon.svg', '/generated/questions.json', '/generated/cases.json', '/generated/meta.json', '/generated/quality-report.json']
 
 self.addEventListener('install', (event) => {
   self.skipWaiting()
