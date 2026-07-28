@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import { buildQualityReport } from './question-quality.mjs'
 
 const root = process.cwd()
 const outputDir = path.join(root, 'public', 'generated')
@@ -77,21 +78,38 @@ async function main() {
   if (!questions.length) throw new Error('QUESTION_BANK introuvable dans la V1.')
   if (!cases.length) throw new Error('CASE_BANK introuvable dans la V1.')
 
-  const uniqueQuestions = [...new Map(questions.filter((q) => q.active !== false && validQuestion(q)).map((q) => [q.id, q])).values()]
+  const structurallyValid = [...new Map(questions.filter((q) => q.active !== false && validQuestion(q)).map((q) => [q.id, q])).values()]
+  const { kept: qualityQuestions, excluded, report: qualityReport } = buildQualityReport(structurallyValid)
   const uniqueCases = [...new Map(cases.filter(validCase).map((c) => [c.id, c])).values()]
 
-  await fs.writeFile(path.join(outputDir, 'questions.json'), JSON.stringify(uniqueQuestions))
+  await fs.writeFile(path.join(outputDir, 'questions.json'), JSON.stringify(qualityQuestions))
   await fs.writeFile(path.join(outputDir, 'cases.json'), JSON.stringify(uniqueCases))
+  await fs.writeFile(path.join(outputDir, 'quality-report.json'), JSON.stringify(qualityReport, null, 2))
+  await fs.writeFile(path.join(outputDir, 'questions-editorial-review.json'), JSON.stringify(excluded.map(({ question, reasons }) => ({
+    id: question.id,
+    subject: question.subject,
+    topic: question.topic,
+    stem: question.stem,
+    options: question.options,
+    answers: question.answers,
+    explanation: question.explanation,
+    source: question.source,
+    mode: question.mode,
+    reasons,
+  })), null, 2))
   await fs.writeFile(path.join(outputDir, 'meta.json'), JSON.stringify({
     generatedAt: new Date().toISOString(),
-    questionCount: uniqueQuestions.length,
+    sourceQuestionCount: structurallyValid.length,
+    questionCount: qualityQuestions.length,
+    editorialReviewCount: excluded.length,
     caseCount: uniqueCases.length,
     correctedCaseCount: uniqueCases.filter((c) => c.status !== 'source_only').length,
     pendingCaseCount: uniqueCases.filter((c) => c.status === 'source_only').length,
-    importedFromLegacy: true
+    importedFromLegacy: true,
   }, null, 2))
 
-  console.log(`[LexQCM] ${uniqueQuestions.length} questions / ${uniqueCases.length} dossiers importés.`)
+  console.log(`[LexQCM] ${qualityQuestions.length} questions utiles conservées / ${excluded.length} questions retirées pour revue éditoriale / ${uniqueCases.length} dossiers.`)
+  qualityReport.categories.forEach((category) => console.log(`[LexQCM][qualité] ${category.count} — ${category.label}`))
 }
 
 await main()
