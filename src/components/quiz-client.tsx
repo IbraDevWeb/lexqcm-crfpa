@@ -46,7 +46,7 @@ export function QuizClient() {
   const [loadingBank, setLoadingBank] = useState(true)
   const [loadError, setLoadError] = useState('')
   const [subject, setSubject] = useState('')
-  const [topic, setTopic] = useState('')
+  const [topicsSelected, setTopicsSelected] = useState<string[]>([])
   const [mode, setMode] = useState(requestedMode === 'update' ? 'update' : '')
   const [difficulty, setDifficulty] = useState('')
   const [type, setType] = useState('')
@@ -113,12 +113,12 @@ export function QuizClient() {
 
   const basePool = useMemo(() => questions.filter((q) =>
     (!subject || q.subject === subject) &&
-    (!topic || q.topic === topic) &&
+    (!topicsSelected.length || topicsSelected.includes(q.topic)) &&
     (!mode || q.mode === mode) &&
     (!difficulty || String(q.difficulty ?? '') === difficulty) &&
     (!type || (q.type ?? (q.answers.length > 1 ? 'multiple' : 'single')) === type) &&
     (!dueOnly || isDue(progress, q.id)),
-  ), [questions, subject, topic, mode, difficulty, type, dueOnly, progress])
+  ), [questions, subject, topicsSelected, mode, difficulty, type, dueOnly, progress])
 
   const errorIds = useMemo(() => new Set(Object.entries(progress.questionStats).filter(([, stat]) => stat.wrong > 0 && (stat.correct === 0 || stat.wrong >= stat.correct)).map(([id]) => id)), [progress.questionStats])
   const favoriteIds = useMemo(() => new Set(progress.favorites), [progress.favorites])
@@ -208,19 +208,20 @@ export function QuizClient() {
   if (!session) {
     const specialLabel = requestedMode === 'errors' ? 'Mode erreurs' : requestedMode === 'favorites' ? 'Mode favoris' : requestedMode === 'update' ? 'Actualisations 2026' : requestedMode === 'adaptive' ? 'Révision adaptative' : ''
     const poolCount = makePool(requestedMode).length
+    const selectedLabel = topicsSelected.length ? `${topicsSelected.length} thème${topicsSelected.length > 1 ? 's' : ''} · ` : ''
     return <>
       <div className="top"><div><h1>Entraînement</h1><p>{questions.length.toLocaleString('fr-FR')} questions chargées. Configure une série exactement comme dans la V1.</p></div><span className="badge"><span className="offlineDot" style={{ background: online ? '#059669' : '#d97706' }} />{online ? (syncing ? 'Synchronisation…' : 'Cloud synchronisé') : 'Mode hors ligne'}</span></div>
       {specialLabel && <div className="alert info"><b>{specialLabel}</b> · {poolCount} question{poolCount > 1 ? 's' : ''} disponible{poolCount > 1 ? 's' : ''}.</div>}
       <div className="card trainingSetup"><div className="formGrid">
-        <div className="field"><label>Matière</label><select value={subject} onChange={(e) => { setSubject(e.target.value); setTopic('') }}><option value="">Toutes les matières</option>{subjects.map((s) => <option key={s}>{s}</option>)}</select></div>
-        <div className="field"><label>Chapitre / thème</label><TopicPicker options={topics} value={topic} disabled={!subject} onChange={setTopic} /></div>
+        <div className="field"><label>Matière</label><select value={subject} onChange={(e) => { setSubject(e.target.value); setTopicsSelected([]) }}><option value="">Toutes les matières</option>{subjects.map((s) => <option key={s}>{s}</option>)}</select></div>
+        <div className="field"><label>Chapitres / thèmes</label><TopicPicker options={topics} value={topicsSelected} disabled={!subject} onChange={setTopicsSelected} /></div>
         <div className="field"><label>Mode</label><select value={mode} onChange={(e) => setMode(e.target.value)}><option value="">Tout mélanger</option><option value="curated">QCM validés</option><option value="case">Cas pratiques</option><option value="synthesis">QRM synthèse</option><option value="drill">Drills mémoire</option><option value="update">Actualisations 2026</option></select></div>
         <div className="field"><label>Difficulté</label><select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}><option value="">Toutes</option>{[1,2,3,4].map((n) => <option key={n} value={n}>Niveau {n}</option>)}</select></div>
         <div className="field"><label>Type</label><select value={type} onChange={(e) => setType(e.target.value)}><option value="">QCM + QRM</option><option value="single">Réponse unique</option><option value="multiple">Réponses multiples</option></select></div>
         <div className="field"><label>Nombre de questions</label><select value={count} onChange={(e) => setCount(Number(e.target.value))}>{[10,20,30,40,60,100].map((n) => <option key={n} value={n}>{n}</option>)}</select></div>
       </div>
       <div className="checkGrid"><label><input type="checkbox" checked={dueOnly} onChange={(e) => setDueOnly(e.target.checked)} /> Uniquement les questions dues / à revoir</label><label><input type="checkbox" checked={timed} onChange={(e) => setTimed(e.target.checked)} /> Mode examen chronométré · 1 min 30 par question</label></div>
-      <div className="setupNote">{(requestedMode ? poolCount : basePool.length).toLocaleString('fr-FR')} questions correspondent à la sélection.</div>
+      <div className="setupNote">{selectedLabel}{(requestedMode ? poolCount : basePool.length).toLocaleString('fr-FR')} questions correspondent à la sélection.</div>
       <div className="practiceLaunch"><button className="btn btnPrimary" disabled={!(requestedMode ? poolCount : basePool.length)} onClick={() => start()}>Démarrer</button><button className="btn btnSoft" disabled={!errorIds.size} onClick={() => start('errors')}>Rejouer mes erreurs</button><button className="btn btnGhost" disabled={!favoriteIds.size} onClick={() => start('favorites')}>Mes favoris</button><button className="btn btnGhost" onClick={() => start('adaptive')}>Révision adaptative</button></div></div>
     </>
   }
