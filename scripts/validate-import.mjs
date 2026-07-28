@@ -6,12 +6,107 @@ const quality = JSON.parse(await fs.readFile('public/generated/quality-report.js
 const editorialReview = JSON.parse(await fs.readFile('public/generated/questions-editorial-review.json', 'utf8'))
 const cases = Number(meta.caseCount || 0)
 const expectedTotal = 540
+const expectedOptionOrderVersion = 2
 const expectedSets = [
   { subject: 'Procédure civile', prefix: 'PC26-CORR-', count: 120 },
   { subject: 'Procédure civile', prefix: 'PC25-CORR-', count: 180 },
   { subject: 'Droit des obligations', prefix: 'OB26-CORR-', count: 120 },
   { subject: 'Droit social', prefix: 'DS26-CORR-', count: 120 },
 ]
+
+function normalize(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[’‘]/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase()
+}
+
+function validateQuestionInternals(question) {
+  if (!Array.isArray(question.options) || question.options.length < 2) {
+    throw new Error(`${question.id} ne contient pas assez de propositions.`)
+  }
+  if (question.options.some((option) => typeof option !== 'string' || !option.trim())) {
+    throw new Error(`${question.id} contient une proposition vide.`)
+  }
+  if (new Set(question.options.map(normalize)).size !== question.options.length) {
+    throw new Error(`${question.id} contient des propositions identiques ou quasi identiques.`)
+  }
+  if (!Array.isArray(question.answers) || question.answers.length === 0) {
+    throw new Error(`${question.id} ne contient aucune bonne réponse.`)
+  }
+  if (new Set(question.answers).size !== question.answers.length) {
+    throw new Error(`${question.id} contient deux fois le même indice de réponse.`)
+  }
+  if (!question.answers.every((answer) => Number.isInteger(answer) && answer >= 0 && answer < question.options.length)) {
+    throw new Error(`${question.id} contient un indice de réponse invalide.`)
+  }
+  if (question.answers.some((answer, index) => index > 0 && question.answers[index - 1] >= answer)) {
+    throw new Error(`${question.id} contient des indices de réponse non triés.`)
+  }
+  if (question.type === 'single' && question.answers.length !== 1) {
+    throw new Error(`${question.id} est déclaré à réponse unique mais possède ${question.answers.length} réponses.`)
+  }
+  if (question.type === 'multiple' && question.answers.length < 2) {
+    throw new Error(`${question.id} est déclaré à réponses multiples mais n’en possède pas au moins deux.`)
+  }
+  if (Array.isArray(question.optionExplanations) && question.optionExplanations.length > 0 && question.optionExplanations.length !== question.options.length) {
+    throw new Error(`${question.id} contient des explications de propositions désalignées.`)
+  }
+}
+
+function validateAnswerPositionBalance(allQuestions) {
+  const groups = new Map()
+  const multiplePatterns = new Set()
+  let currentPosition = null
+  let currentStreak = 0
+  let longestStreak = 0
+
+  allQuestions.forEach((question) => {
+    if (question.answers.length === 1) {
+      const key = `${question.subject}::${question.options.length}`
+      const group = groups.get(key) || { subject: question.subject, optionCount: question.options.length, positions: Array(question.options.length).fill(0), total: 0 }
+      group.positions[question.answers[0]] += 1
+      group.total += 1
+      groups.set(key, group)
+
+      if (currentPosition === question.answers[0]) currentStreak += 1
+      else {
+        currentPosition = question.answers[0]
+        currentStreak = 1
+      }
+      longestStreak = Math.max(longestStreak, currentStreak)
+    } else {
+      currentPosition = null
+      currentStreak = 0
+      multiplePatterns.add(`${question.options.length}:${question.answers.join('-')}`)
+    }
+  })
+
+  for (const group of groups.values()) {
+    if (group.total < group.optionCount) continue
+    const maximum = Math.max(...group.positions)
+    const minimum = Math.min(...group.positions)
+    if (minimum === 0 || maximum - minimum > 1) {
+      throw new Error(`Répartition déséquilibrée pour ${group.subject} (${group.optionCount} choix) : ${group.positions.join('/')}.`)
+    }
+  }
+
+  if (longestStreak > 10) {
+    throw new Error(`Une série de ${longestStreak} réponses uniques consécutives occupe la même position.`)
+  }
+  if (allQuestions.some((question) => question.answers.length > 1) && multiplePatterns.size < 3) {
+    throw new Error('Les combinaisons de réponses multiples ne sont pas suffisamment variées.')
+  }
+
+  return {
+    groups: [...groups.values()],
+    multiplePatternCount: multiplePatterns.size,
+    longestSingleAnswerPositionStreak: longestStreak,
+  }
+}
 
 console.log(`[LexQCM] Banque QCM publiée : ${questions.length} questions.`)
 expectedSets.forEach((set) => console.log(`[LexQCM] ${set.subject} (${set.prefix}) : ${questions.filter((q) => q.subject === set.subject && String(q.id).startsWith(set.prefix)).length}.`))
@@ -33,6 +128,9 @@ if (editorialReview.length !== 0 || Number(meta.editorialReviewCount) !== 0 || N
 if (quality.keptCount !== expectedTotal || quality.inputCount !== expectedTotal) {
   throw new Error(`Le rapport qualité ne correspond pas aux ${expectedTotal} questions du socle.`)
 }
+if (Number(meta.optionOrderVersion) !== expectedOptionOrderVersion || Number(quality.optionOrderVersion) !== expectedOptionOrderVersion) {
+  throw new Error(`La version de mélange des propositions doit être ${expectedOptionOrderVersion}.`)
+}
 for (const set of expectedSets) {
   const matches = questions.filter((q) => q.subject === set.subject && String(q.id).startsWith(set.prefix))
   if (matches.length !== set.count) {
@@ -45,6 +143,10 @@ if (questions.some((q) => !expectedSets.some((set) => q.subject === set.subject 
 if (new Set(questions.map((q) => q.id)).size !== expectedTotal) {
   throw new Error('Des identifiants QCM sont dupliqués.')
 }
+questions.forEach(validateQuestionInternals)
+const answerPositionAudit = validateAnswerPositionBalance(questions)
+console.log(`[LexQCM] Répartition des réponses validée : ${JSON.stringify(answerPositionAudit.groups.map((group) => ({ subject: group.subject, choices: group.optionCount, positions: group.positions })))}.`)
+console.log(`[LexQCM] ${answerPositionAudit.multiplePatternCount} combinaisons de réponses multiples ; série maximale identique : ${answerPositionAudit.longestSingleAnswerPositionStreak}.`)
 if (Number(meta.procedureCivileCorrectionQuestionCount) !== 300 || Number(meta.procedureCivile2025QuestionCount) !== 180 || Number(meta.procedureCivile2026QuestionCount) !== 120) {
   throw new Error('Les métadonnées de procédure civile ne correspondent pas aux lots 2025 et 2026.')
 }
