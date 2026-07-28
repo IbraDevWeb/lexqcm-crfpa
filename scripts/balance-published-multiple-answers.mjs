@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 
 const generatedDir = path.join(process.cwd(), 'public', 'generated')
-const OPTION_ORDER_VERSION = 4
+const OPTION_ORDER_VERSION = 3
 
 function stableHash(value) {
   let hash = 2166136261
