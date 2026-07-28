@@ -29,6 +29,7 @@ jobs:
             import.log
             public/generated/meta.json
             public/generated/quality-report.json
+            public/generated/legal-authority-report.json
             public/generated/questions-editorial-review.json
           if-no-files-found: warn
       - run: node scripts/validate-import.mjs
