@@ -3,6 +3,14 @@ import path from 'node:path'
 
 const generatedDir = path.join(process.cwd(), 'public', 'generated')
 const PUBLISHED_OPTION_ORDER_VERSION = 3
+const TRUSTED_STATUSES = new Set([
+  'existing',
+  'source-explicit',
+  'case-exact',
+  'case-source-match',
+  'case-direct',
+  'case-direct-official',
+])
 
 function normalize(value) {
   return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[’‘]/g, "'")
@@ -19,6 +27,10 @@ function hasLegalAuthority(question) {
   return Array.isArray(question.legalRefs)
     && question.legalRefs.length > 0
     && question.legalRefs.every((reference) => typeof reference === 'string' && isPreciseLegalReference(reference))
+}
+
+function isPublishableAuthority(question) {
+  return hasLegalAuthority(question) && TRUSTED_STATUSES.has(question.legalAuthorityStatus)
 }
 
 function stableHash(value) {
@@ -106,39 +118,55 @@ async function main() {
   ])
   if (!Array.isArray(questions)) throw new Error('Banque QCM invalide avant quarantaine juridique.')
 
-  const sourced = questions.filter(hasLegalAuthority)
-  const pending = questions.filter((question) => !hasLegalAuthority(question)).map((question) => ({
+  const cleanQuestions = questions.filter((question) => question.catalogOrigin !== 'case-bank')
+  const directCaseQuestions = questions.filter((question) => question.catalogOrigin === 'case-bank')
+  const invalidDirect = directCaseQuestions.filter((question) => !isPublishableAuthority(question))
+  if (invalidDirect.length) throw new Error(`${invalidDirect.length} QCM de dossier ne satisfont pas la politique de visa direct.`)
+
+  const trustedCleanQuestions = cleanQuestions.filter(isPublishableAuthority)
+  const published = rebalanceSingleAnswers([...trustedCleanQuestions, ...directCaseQuestions])
+  const pending = cleanQuestions.filter((question) => !isPublishableAuthority(question)).map((question) => ({
     ...question,
     active: false,
-    legalAuthorityStatus: 'missing',
-    reviewReason: 'Visa juridique précis absent ou rapprochement insuffisamment certain.',
+    legalAuthorityStatus: question.legalAuthorityStatus || 'missing',
+    proposedLegalRefs: Array.isArray(question.legalRefs) ? question.legalRefs : [],
+    reviewReason: hasLegalAuthority(question)
+      ? 'Visa proposé par rapprochement automatique entre deux énoncés distincts : validation manuelle requise.'
+      : 'Visa juridique précis absent ou rapprochement insuffisamment certain.',
   }))
-  const published = rebalanceSingleAnswers(sourced)
+
   const publishedIds = new Set(published.map((question) => question.id))
   const pendingIds = new Set(pending.map((question) => question.id))
   if (publishedIds.size !== published.length || pendingIds.size !== pending.length) throw new Error('Identifiants dupliqués pendant la quarantaine juridique.')
   if ([...publishedIds].some((id) => pendingIds.has(id))) throw new Error('Une question figure à la fois dans la banque active et dans la revue juridique.')
-  if (published.length + pending.length !== questions.length) throw new Error('Des questions ont été perdues pendant la quarantaine juridique.')
-  if (published.some((question) => !hasLegalAuthority(question))) throw new Error('Une question sans visa subsiste dans la banque publiée.')
+  if (trustedCleanQuestions.length + pending.length !== cleanQuestions.length) throw new Error('Des questions éditoriales ont été perdues pendant la quarantaine juridique.')
+  if (published.some((question) => !isPublishableAuthority(question))) throw new Error('Une question au visa non fiable subsiste dans la banque publiée.')
 
   const activeBySubject = countsBySubject(published)
   const reviewBySubject = countsBySubject(pending)
+  const directBySubject = countsBySubject(directCaseQuestions)
+  const trustedCleanBySubject = countsBySubject(trustedCleanQuestions)
   const positionStats = answerPositionStats(published)
   const activeBySet = {
-    'PC26-CORR-': published.filter((question) => question.id.startsWith('PC26-CORR-')).length,
-    'PC25-CORR-': published.filter((question) => question.id.startsWith('PC25-CORR-')).length,
-    'OB26-CORR-': published.filter((question) => question.id.startsWith('OB26-CORR-')).length,
-    'DS26-CORR-': published.filter((question) => question.id.startsWith('DS26-CORR-')).length,
+    'PC26-CORR-': trustedCleanQuestions.filter((question) => question.id.startsWith('PC26-CORR-')).length,
+    'PC25-CORR-': trustedCleanQuestions.filter((question) => question.id.startsWith('PC25-CORR-')).length,
+    'OB26-CORR-': trustedCleanQuestions.filter((question) => question.id.startsWith('OB26-CORR-')).length,
+    'DS26-CORR-': trustedCleanQuestions.filter((question) => question.id.startsWith('DS26-CORR-')).length,
   }
 
   const legalPublication = {
-    policy: 'Aucun QCM sans article, texte numéroté ou décision datée n’est publié dans l’entraînement.',
-    sourceQuestionCount: questions.length,
+    policy: 'Aucun QCM n’est publié sur la seule base d’un rapprochement sémantique avec un autre énoncé.',
+    sourceQuestionCount: cleanQuestions.length,
+    trustedCleanQuestionCount: trustedCleanQuestions.length,
+    directCaseQuestionCount: directCaseQuestions.length,
     publishedQuestionCount: published.length,
     legalReviewCount: pending.length,
     publishedCoverageRate: published.length ? 100 : 0,
+    trustedStatuses: [...TRUSTED_STATUSES],
     activeBySubject,
     reviewBySubject,
+    directBySubject,
+    trustedCleanBySubject,
     activeBySet,
   }
 
@@ -147,19 +175,24 @@ async function main() {
     fs.writeFile(paths.review, JSON.stringify(pending, null, 2)),
     fs.writeFile(paths.meta, JSON.stringify({
       ...meta,
-      sourceQuestionCount: questions.length,
+      sourceQuestionCount: cleanQuestions.length,
+      trustedCleanQuestionCount: trustedCleanQuestions.length,
+      directCaseQuestionCount: directCaseQuestions.length,
       questionCount: published.length,
       legalReviewCount: pending.length,
       legalPublicationPolicy: true,
+      trustedLegalAuthorityStatuses: [...TRUSTED_STATUSES],
       optionOrderVersion: PUBLISHED_OPTION_ORDER_VERSION,
       answerPositionStats: positionStats,
       questionsBySubject: activeBySubject,
       legalReviewBySubject: reviewBySubject,
-      procedureCivileCorrectionQuestionCount: activeBySubject['Procédure civile'] || 0,
+      directCaseQuestionsBySubject: directBySubject,
+      trustedCleanQuestionsBySubject: trustedCleanBySubject,
+      procedureCivileCorrectionQuestionCount: trustedCleanBySubject['Procédure civile'] || 0,
       procedureCivile2026QuestionCount: activeBySet['PC26-CORR-'],
       procedureCivile2025QuestionCount: activeBySet['PC25-CORR-'],
-      obligationsCorrectionQuestionCount: activeBySubject['Droit des obligations'] || 0,
-      droitSocialCorrectionQuestionCount: activeBySubject['Droit social'] || 0,
+      obligationsCorrectionQuestionCount: trustedCleanBySubject['Droit des obligations'] || 0,
+      droitSocialCorrectionQuestionCount: trustedCleanBySubject['Droit social'] || 0,
     }, null, 2)),
     fs.writeFile(paths.quality, JSON.stringify({
       ...quality,
@@ -171,17 +204,23 @@ async function main() {
     }, null, 2)),
     fs.writeFile(paths.authority, JSON.stringify({
       ...authority,
+      trustedCleanQuestionCount: trustedCleanQuestions.length,
+      directCaseQuestionCount: directCaseQuestions.length,
       publishedQuestionCount: published.length,
       quarantinedQuestionCount: pending.length,
       publishedCoverageRate: published.length ? 100 : 0,
+      trustedStatuses: [...TRUSTED_STATUSES],
       activeBySubject,
       reviewBySubject,
+      directBySubject,
+      trustedCleanBySubject,
       activeBySet,
     }, null, 2)),
   ])
 
-  console.log(`[LexQCM] Banque juridiquement autonome : ${published.length}/${questions.length} QCM publiés ; ${pending.length} placés en revue.`)
-  Object.entries(activeBySubject).forEach(([subject, count]) => console.log(`[LexQCM] ${subject} — ${count} QCM publiés avec visa.`))
+  console.log(`[LexQCM] Banque juridiquement autonome : ${published.length} QCM publiés (${trustedCleanQuestions.length} issus directement de la banque éditoriale + ${directCaseQuestions.length} issus des dossiers).`)
+  console.log(`[LexQCM] Revue juridique : ${pending.length}/${cleanQuestions.length} QCM éditoriaux conservés hors entraînement.`)
+  Object.entries(activeBySubject).forEach(([subject, count]) => console.log(`[LexQCM] ${subject} — ${count} QCM publiés avec visa direct ou explicite.`))
   console.log(`[LexQCM] Réponses actives rééquilibrées en ordre v${PUBLISHED_OPTION_ORDER_VERSION} : ${JSON.stringify(positionStats.bySubject)}.`)
 }
 
