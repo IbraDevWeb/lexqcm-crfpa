@@ -68,6 +68,21 @@ Le lot couvre notamment :
 
 Chaque question conserve une référence précise au corrigé et à la page utilisée.
 
+## Ordre des propositions et fiabilité des réponses
+
+À la génération de la banque publiée :
+
+- les propositions de chaque question sont mélangées à l’aide d’un ordre pseudo-aléatoire déterminé par l’identifiant de la question ;
+- cet ordre reste stable entre deux sessions, sur téléphone et sur ordinateur ;
+- les indices des bonnes réponses sont recalculés après le mélange, y compris pour les questions à réponses multiples ;
+- les explications propres à chaque proposition sont déplacées avec la proposition correspondante ;
+- les positions des réponses uniques sont équilibrées par matière et par nombre de choix ;
+- les propositions vides, dupliquées ou quasi identiques sont refusées ;
+- les indices de réponse absents, dupliqués, non triés ou hors limites sont refusés ;
+- la cohérence entre le type `single` ou `multiple` et le nombre de bonnes réponses est vérifiée.
+
+Le mélange est effectué au build et non à chaque affichage afin de ne pas modifier la signification des réponses enregistrées au cours d’une session.
+
 ## Règles de contrôle
 
 À chaque développement et déploiement, le build vérifie automatiquement que :
@@ -80,6 +95,8 @@ Chaque question conserve une référence précise au corrigé et à la page util
 6. aucun identifiant n’est dupliqué ;
 7. aucune question n’est rejetée par le filtre éditorial ;
 8. aucune source QCM legacy n’est importée ;
-9. les dossiers progressifs restent conservés séparément.
+9. les positions des bonnes réponses sont équilibrées et ne présentent pas de longue série identique ;
+10. les questions à réponses multiples produisent plusieurs combinaisons de positions ;
+11. les dossiers progressifs restent conservés séparément.
 
 Les futures matières seront ajoutées sous la forme de nouveaux lots éditoriaux indépendants, soumis aux mêmes contrôles avant publication.
