@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import { gunzipSync } from 'node:zlib'
 import { buildQualityReport } from './question-quality.mjs'
 
 const root = process.cwd()
@@ -11,6 +12,13 @@ const cleanQuestionSets = [
     subject: 'Procédure civile',
     prefix: 'PC26-CORR-',
     label: 'Pré-Barreau 2026 — 12 corrigés de procédure civile',
+  },
+  {
+    directory: 'data/procedure-civile-2025',
+    expected: 180,
+    subject: 'Procédure civile',
+    prefix: 'PC25-CORR-',
+    label: 'Pré-Barreau 2025 — 15 corrigés de procédure civile',
   },
   {
     directory: 'data/obligations-2026',
@@ -71,13 +79,20 @@ async function readQuestionDirectory(directory) {
   const absolute = path.join(root, directory)
   const entries = await fs.readdir(absolute, { withFileTypes: true })
   const files = entries
-    .filter((entry) => entry.isFile() && entry.name.endsWith('.json'))
+    .filter((entry) => entry.isFile() && (entry.name.endsWith('.json') || entry.name.endsWith('.json.gz.b64')))
     .map((entry) => entry.name)
     .sort((a, b) => a.localeCompare(b, 'fr'))
 
   const questions = []
   for (const file of files) {
-    const value = JSON.parse(await fs.readFile(path.join(absolute, file), 'utf8'))
+    const filePath = path.join(absolute, file)
+    let value
+    if (file.endsWith('.json.gz.b64')) {
+      const encoded = (await fs.readFile(filePath, 'utf8')).trim()
+      value = JSON.parse(gunzipSync(Buffer.from(encoded, 'base64')).toString('utf8'))
+    } else {
+      value = JSON.parse(await fs.readFile(filePath, 'utf8'))
+    }
     if (!Array.isArray(value)) throw new Error(`${directory}/${file} ne contient pas un tableau de questions.`)
     questions.push(...value)
   }
@@ -107,10 +122,10 @@ async function main() {
   for (const set of cleanQuestionSets) {
     const setQuestions = await readQuestionDirectory(set.directory)
     if (setQuestions.length !== set.expected) {
-      throw new Error(`Lot ${set.subject} incomplet : ${setQuestions.length}/${set.expected} questions.`)
+      throw new Error(`Lot ${set.subject} (${set.prefix}) incomplet : ${setQuestions.length}/${set.expected} questions.`)
     }
     if (setQuestions.some((q) => q.subject !== set.subject || !q.id?.startsWith(set.prefix))) {
-      throw new Error(`Une question étrangère au lot ${set.subject} a été détectée.`)
+      throw new Error(`Une question étrangère au lot ${set.subject} (${set.prefix}) a été détectée.`)
     }
     sourceQuestions.push(...setQuestions)
   }
@@ -137,15 +152,20 @@ async function main() {
     throw new Error(`Le contrôle éditorial a écarté ${excluded.length} question(s) du socle sain.`)
   }
 
-  const countsBySubject = Object.fromEntries(cleanQuestionSets.map((set) => [
-    set.subject,
-    qualityQuestions.filter((q) => q.subject === set.subject).length,
+  const countsBySet = Object.fromEntries(cleanQuestionSets.map((set) => [
+    set.prefix,
+    qualityQuestions.filter((q) => q.subject === set.subject && q.id.startsWith(set.prefix)).length,
   ]))
   for (const set of cleanQuestionSets) {
-    if (countsBySubject[set.subject] !== set.expected) {
-      throw new Error(`Comptage invalide pour ${set.subject} : ${countsBySubject[set.subject]}/${set.expected}.`)
+    if (countsBySet[set.prefix] !== set.expected) {
+      throw new Error(`Comptage invalide pour ${set.subject} (${set.prefix}) : ${countsBySet[set.prefix]}/${set.expected}.`)
     }
   }
+
+  const countsBySubject = qualityQuestions.reduce((counts, question) => {
+    counts[question.subject] = (counts[question.subject] || 0) + 1
+    return counts
+  }, {})
 
   await fs.writeFile(path.join(outputDir, 'questions.json'), JSON.stringify(qualityQuestions))
   await fs.writeFile(path.join(outputDir, 'cases.json'), JSON.stringify(uniqueCases))
@@ -157,6 +177,8 @@ async function main() {
     questionCount: expectedQuestionCount,
     editorialReviewCount: 0,
     procedureCivileCorrectionQuestionCount: countsBySubject['Procédure civile'],
+    procedureCivile2026QuestionCount: countsBySet['PC26-CORR-'],
+    procedureCivile2025QuestionCount: countsBySet['PC25-CORR-'],
     obligationsCorrectionQuestionCount: countsBySubject['Droit des obligations'],
     droitSocialCorrectionQuestionCount: countsBySubject['Droit social'],
     questionsBySubject: countsBySubject,
@@ -169,7 +191,7 @@ async function main() {
   }, null, 2))
 
   console.log(`[LexQCM] Base QCM saine : ${qualityQuestions.length} questions, aucune question legacy.`)
-  cleanQuestionSets.forEach((set) => console.log(`[LexQCM] ${countsBySubject[set.subject]} questions — ${set.subject}.`))
+  cleanQuestionSets.forEach((set) => console.log(`[LexQCM] ${countsBySet[set.prefix]} questions — ${set.subject} (${set.prefix}).`))
   console.log(`[LexQCM] ${uniqueCases.length} dossiers progressifs conservés indépendamment de la banque QCM.`)
 }
 
