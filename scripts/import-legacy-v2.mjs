@@ -4,8 +4,22 @@ import { buildQualityReport } from './question-quality.mjs'
 
 const root = process.cwd()
 const outputDir = path.join(root, 'public', 'generated')
-const cleanQuestionDir = 'data/procedure-civile-2026'
-const expectedQuestionCount = 120
+const cleanQuestionSets = [
+  {
+    directory: 'data/procedure-civile-2026',
+    expected: 120,
+    subject: 'Procédure civile',
+    prefix: 'PC26-CORR-',
+    label: 'Pré-Barreau 2026 — 12 corrigés de procédure civile',
+  },
+  {
+    directory: 'data/obligations-2026',
+    expected: 120,
+    subject: 'Droit des obligations',
+    prefix: 'OB26-CORR-',
+    label: 'Pré-Barreau 2026 — 12 corrigés de droit des obligations',
+  },
+]
 
 function extractAssignedJson(source, assignment) {
   const marker = source.indexOf(assignment)
@@ -81,19 +95,26 @@ async function main() {
   await fs.mkdir(outputDir, { recursive: true })
 
   // Base saine : aucune ancienne QUESTION_BANK n'est lue ou fusionnée.
-  // La banque QCM publiée provient exclusivement des lots éditoriaux validés ci-dessous.
-  const sourceQuestions = await readQuestionDirectory(cleanQuestionDir)
+  // Seuls les lots éditoriaux explicitement listés ci-dessus sont publiés.
+  const sourceQuestions = []
+  for (const set of cleanQuestionSets) {
+    const setQuestions = await readQuestionDirectory(set.directory)
+    if (setQuestions.length !== set.expected) {
+      throw new Error(`Lot ${set.subject} incomplet : ${setQuestions.length}/${set.expected} questions.`)
+    }
+    if (setQuestions.some((q) => q.subject !== set.subject || !q.id?.startsWith(set.prefix))) {
+      throw new Error(`Une question étrangère au lot ${set.subject} a été détectée.`)
+    }
+    sourceQuestions.push(...setQuestions)
+  }
 
   // Les dossiers progressifs sont un catalogue distinct des QCM et restent conservés.
   const dataCases = await readAssignedBank('data/cases.js', 'window.CASE_BANK=')
   const htmlCases = await readAssignedBank('index.html', 'window.CASE_BANK=')
   const cases = richer(dataCases, htmlCases)
-
   if (!cases.length) throw new Error('CASE_BANK introuvable dans les sources existantes.')
-  if (sourceQuestions.length !== expectedQuestionCount) {
-    throw new Error(`Lot procédure civile 2026 incomplet : ${sourceQuestions.length}/${expectedQuestionCount} questions.`)
-  }
 
+  const expectedQuestionCount = cleanQuestionSets.reduce((sum, set) => sum + set.expected, 0)
   const structurallyValid = [...new Map(sourceQuestions
     .filter((q) => q.active !== false && validQuestion(q))
     .map((q) => [q.id, q])).values()]
@@ -108,8 +129,15 @@ async function main() {
   if (qualityQuestions.length !== expectedQuestionCount || excluded.length !== 0) {
     throw new Error(`Le contrôle éditorial a écarté ${excluded.length} question(s) du socle sain.`)
   }
-  if (qualityQuestions.some((q) => q.subject !== 'Procédure civile' || !q.id.startsWith('PC26-CORR-'))) {
-    throw new Error('Une question étrangère au lot procédure civile 2026 a été détectée.')
+
+  const countsBySubject = Object.fromEntries(cleanQuestionSets.map((set) => [
+    set.subject,
+    qualityQuestions.filter((q) => q.subject === set.subject).length,
+  ]))
+  for (const set of cleanQuestionSets) {
+    if (countsBySubject[set.subject] !== set.expected) {
+      throw new Error(`Comptage invalide pour ${set.subject} : ${countsBySubject[set.subject]}/${set.expected}.`)
+    }
   }
 
   await fs.writeFile(path.join(outputDir, 'questions.json'), JSON.stringify(qualityQuestions))
@@ -121,16 +149,19 @@ async function main() {
     sourceQuestionCount: expectedQuestionCount,
     questionCount: expectedQuestionCount,
     editorialReviewCount: 0,
-    procedureCivileCorrectionQuestionCount: expectedQuestionCount,
+    procedureCivileCorrectionQuestionCount: countsBySubject['Procédure civile'],
+    obligationsCorrectionQuestionCount: countsBySubject['Droit des obligations'],
+    questionsBySubject: countsBySubject,
     cleanQuestionBase: true,
-    questionSources: ['Pré-Barreau 2026 — 12 corrigés de procédure civile'],
+    questionSources: cleanQuestionSets.map((set) => set.label),
     caseCount: uniqueCases.length,
     correctedCaseCount: uniqueCases.filter((c) => c.status !== 'source_only').length,
     pendingCaseCount: uniqueCases.filter((c) => c.status === 'source_only').length,
     importedFromLegacy: false,
   }, null, 2))
 
-  console.log(`[LexQCM] Base QCM saine : ${qualityQuestions.length} questions de procédure civile, aucune question legacy.`)
+  console.log(`[LexQCM] Base QCM saine : ${qualityQuestions.length} questions, aucune question legacy.`)
+  cleanQuestionSets.forEach((set) => console.log(`[LexQCM] ${countsBySubject[set.subject]} questions — ${set.subject}.`))
   console.log(`[LexQCM] ${uniqueCases.length} dossiers progressifs conservés indépendamment de la banque QCM.`)
 }
 
