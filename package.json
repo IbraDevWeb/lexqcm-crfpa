@@ -6,13 +6,13 @@
     "node": ">=22.0.0"
   },
   "scripts": {
-    "predev": "node scripts/import-legacy-v2.mjs && node scripts/enrich-legal-authorities.mjs && node scripts/refine-legal-authority-matches.mjs && node scripts/expand-legal-authority-concepts.mjs && node scripts/consensus-legal-authorities.mjs && node scripts/augment-with-direct-case-questions.mjs && node scripts/quarantine-unsourced-questions.mjs && node scripts/balance-published-multiple-answers.mjs",
+    "predev": "node scripts/import-legacy-v2.mjs && node scripts/enrich-legal-authorities.mjs && node scripts/refine-legal-authority-matches.mjs && node scripts/expand-legal-authority-concepts.mjs && node scripts/consensus-legal-authorities.mjs && node scripts/augment-with-direct-case-questions.mjs && node scripts/apply-official-legal-overrides.mjs && node scripts/quarantine-unsourced-questions.mjs && node scripts/balance-published-multiple-answers.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/import-legacy-v2.mjs && node scripts/enrich-legal-authorities.mjs && node scripts/refine-legal-authority-matches.mjs && node scripts/expand-legal-authority-concepts.mjs && node scripts/consensus-legal-authorities.mjs && node scripts/augment-with-direct-case-questions.mjs && node scripts/quarantine-unsourced-questions.mjs && node scripts/balance-published-multiple-answers.mjs",
+    "prebuild": "node scripts/import-legacy-v2.mjs && node scripts/enrich-legal-authorities.mjs && node scripts/refine-legal-authority-matches.mjs && node scripts/expand-legal-authority-concepts.mjs && node scripts/consensus-legal-authorities.mjs && node scripts/augment-with-direct-case-questions.mjs && node scripts/apply-official-legal-overrides.mjs && node scripts/quarantine-unsourced-questions.mjs && node scripts/balance-published-multiple-answers.mjs",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "import:legacy": "node scripts/import-legacy-v2.mjs && node scripts/enrich-legal-authorities.mjs && node scripts/refine-legal-authority-matches.mjs && node scripts/expand-legal-authority-concepts.mjs && node scripts/consensus-legal-authorities.mjs && node scripts/augment-with-direct-case-questions.mjs && node scripts/quarantine-unsourced-questions.mjs && node scripts/balance-published-multiple-answers.mjs"
+    "import:legacy": "node scripts/import-legacy-v2.mjs && node scripts/enrich-legal-authorities.mjs && node scripts/refine-legal-authority-matches.mjs && node scripts/expand-legal-authority-concepts.mjs && node scripts/consensus-legal-authorities.mjs && node scripts/augment-with-direct-case-questions.mjs && node scripts/apply-official-legal-overrides.mjs && node scripts/quarantine-unsourced-questions.mjs && node scripts/balance-published-multiple-answers.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.3",
