@@ -7,7 +7,6 @@ const TRUSTED_STATUSES = new Set([
   'existing',
   'source-explicit',
   'case-exact',
-  'case-source-match',
   'case-direct',
   'case-direct-official',
 ])
@@ -155,7 +154,7 @@ async function main() {
   }
 
   const legalPublication = {
-    policy: 'Aucun QCM n’est publié sur la seule base d’un rapprochement sémantique avec un autre énoncé.',
+    policy: 'Aucun QCM n’est publié sur la seule base d’un rapprochement sémantique ou documentaire avec un autre énoncé.',
     sourceQuestionCount: cleanQuestions.length,
     trustedCleanQuestionCount: trustedCleanQuestions.length,
     directCaseQuestionCount: directCaseQuestions.length,
