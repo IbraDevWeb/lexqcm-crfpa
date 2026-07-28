@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { isDue, questionStat, recordAnswer } from '@/lib/progress'
 import { modeLabel, type LexQuestion } from '@/lib/catalog'
 import { useProgress } from '@/lib/use-progress'
+import { TopicPicker } from '@/components/topic-picker'
 
 type Session = {
   items: LexQuestion[]
@@ -103,7 +104,12 @@ export function QuizClient() {
   }, [session?.startedAt, session?.timed])
 
   const subjects = useMemo(() => [...new Set(questions.map((q) => q.subject))].sort((a, b) => a.localeCompare(b, 'fr')), [questions])
-  const topics = useMemo(() => [...new Set(questions.filter((q) => !subject || q.subject === subject).map((q) => q.topic))].sort((a, b) => a.localeCompare(b, 'fr')), [questions, subject])
+  const topics = useMemo(() => {
+    if (!subject) return []
+    const counts = new Map<string, number>()
+    questions.filter((q) => q.subject === subject).forEach((q) => counts.set(q.topic, (counts.get(q.topic) || 0) + 1))
+    return [...counts.entries()].map(([value, count]) => ({ value, count })).sort((a, b) => a.value.localeCompare(b.value, 'fr'))
+  }, [questions, subject])
 
   const basePool = useMemo(() => questions.filter((q) =>
     (!subject || q.subject === subject) &&
@@ -207,7 +213,7 @@ export function QuizClient() {
       {specialLabel && <div className="alert info"><b>{specialLabel}</b> · {poolCount} question{poolCount > 1 ? 's' : ''} disponible{poolCount > 1 ? 's' : ''}.</div>}
       <div className="card trainingSetup"><div className="formGrid">
         <div className="field"><label>Matière</label><select value={subject} onChange={(e) => { setSubject(e.target.value); setTopic('') }}><option value="">Toutes les matières</option>{subjects.map((s) => <option key={s}>{s}</option>)}</select></div>
-        <div className="field"><label>Chapitre / thème</label><select value={topic} onChange={(e) => setTopic(e.target.value)}><option value="">Tous les thèmes</option>{topics.map((t) => <option key={t}>{t}</option>)}</select></div>
+        <div className="field"><label>Chapitre / thème</label><TopicPicker options={topics} value={topic} disabled={!subject} onChange={setTopic} /></div>
         <div className="field"><label>Mode</label><select value={mode} onChange={(e) => setMode(e.target.value)}><option value="">Tout mélanger</option><option value="curated">QCM validés</option><option value="case">Cas pratiques</option><option value="synthesis">QRM synthèse</option><option value="drill">Drills mémoire</option><option value="update">Actualisations 2026</option></select></div>
         <div className="field"><label>Difficulté</label><select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}><option value="">Toutes</option>{[1,2,3,4].map((n) => <option key={n} value={n}>Niveau {n}</option>)}</select></div>
         <div className="field"><label>Type</label><select value={type} onChange={(e) => setType(e.target.value)}><option value="">QCM + QRM</option><option value="single">Réponse unique</option><option value="multiple">Réponses multiples</option></select></div>
