@@ -12,7 +12,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "import:legacy": "node scripts/import-legacy-v2.mjs && node scripts/enrich-legal-authorities.mjs"
+    "import:legacy": "node scripts/import-legacy-v2.mjs && node scripts/enrich-legal-authorities.mjs && node scripts/debug-legal-matches.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.3",
@@ -23,8 +23,8 @@
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
-    "@types/react": "^19.2.0",
-    "@types/react-dom": "^19.2.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "typescript": "^5.9.0"
   }
 }
