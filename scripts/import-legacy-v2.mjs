@@ -4,6 +4,8 @@ import { buildQualityReport } from './question-quality.mjs'
 
 const root = process.cwd()
 const outputDir = path.join(root, 'public', 'generated')
+const cleanQuestionDir = 'data/procedure-civile-2026'
+const expectedQuestionCount = 120
 
 function extractAssignedJson(source, assignment) {
   const marker = source.indexOf(assignment)
@@ -35,7 +37,7 @@ function extractAssignedJson(source, assignment) {
   return null
 }
 
-async function readBank(file, assignment) {
+async function readAssignedBank(file, assignment) {
   try {
     const source = await fs.readFile(path.join(root, file), 'utf8')
     return extractAssignedJson(source, assignment)
@@ -61,12 +63,6 @@ async function readQuestionDirectory(directory) {
   return questions
 }
 
-function richer(a, b) {
-  const left = Array.isArray(a) ? a : []
-  const right = Array.isArray(b) ? b : []
-  return right.length > left.length ? right : left
-}
-
 function validQuestion(q) {
   return q && typeof q.id === 'string' && typeof q.subject === 'string' && typeof q.topic === 'string' && typeof q.stem === 'string' && Array.isArray(q.options) && q.options.length >= 2 && Array.isArray(q.answers) && q.answers.every((a) => Number.isInteger(a) && a >= 0 && a < q.options.length)
 }
@@ -78,67 +74,54 @@ function validCase(c) {
 async function main() {
   await fs.mkdir(outputDir, { recursive: true })
 
-  const dataQuestions = await readBank('data/questions.js', 'window.QUESTION_BANK=')
-  const dataCases = await readBank('data/cases.js', 'window.CASE_BANK=')
-  const procedureCivile2026 = await readQuestionDirectory('data/procedure-civile-2026')
+  // Base saine : aucune ancienne QUESTION_BANK n'est lue ou fusionnée.
+  // La banque QCM publiée provient exclusivement des lots éditoriaux validés ci-dessous.
+  const sourceQuestions = await readQuestionDirectory(cleanQuestionDir)
+  const cases = await readAssignedBank('data/cases.js', 'window.CASE_BANK=')
 
-  let htmlQuestions = null
-  let htmlCases = null
-  try {
-    const html = await fs.readFile(path.join(root, 'index.html'), 'utf8')
-    htmlQuestions = extractAssignedJson(html, 'window.QUESTION_BANK=')
-    htmlCases = extractAssignedJson(html, 'window.CASE_BANK=')
-  } catch {}
-
-  const legacyQuestions = richer(dataQuestions, htmlQuestions)
-  const questions = [...legacyQuestions, ...procedureCivile2026]
-  const cases = richer(dataCases, htmlCases)
-
-  if (!legacyQuestions.length) throw new Error('QUESTION_BANK introuvable dans la V1.')
-  if (!cases.length) throw new Error('CASE_BANK introuvable dans la V1.')
-  if (procedureCivile2026.length !== 120) {
-    throw new Error(`Lot procédure civile 2026 incomplet : ${procedureCivile2026.length}/120 questions.`)
+  if (!Array.isArray(cases) || !cases.length) throw new Error('CASE_BANK introuvable dans la V1.')
+  if (sourceQuestions.length !== expectedQuestionCount) {
+    throw new Error(`Lot procédure civile 2026 incomplet : ${sourceQuestions.length}/${expectedQuestionCount} questions.`)
   }
 
-  const structurallyValid = [...new Map(questions.filter((q) => q.active !== false && validQuestion(q)).map((q) => [q.id, q])).values()]
+  const structurallyValid = [...new Map(sourceQuestions
+    .filter((q) => q.active !== false && validQuestion(q))
+    .map((q) => [q.id, q])).values()]
+
+  if (structurallyValid.length !== expectedQuestionCount) {
+    throw new Error(`Structure invalide ou identifiants dupliqués : ${structurallyValid.length}/${expectedQuestionCount} questions valides.`)
+  }
+
   const { kept: qualityQuestions, excluded, report: qualityReport } = buildQualityReport(structurallyValid)
   const uniqueCases = [...new Map(cases.filter(validCase).map((c) => [c.id, c])).values()]
-  const publishedProcedureCivile2026 = qualityQuestions.filter((q) => q.id.startsWith('PC26-CORR-'))
 
-  if (publishedProcedureCivile2026.length !== procedureCivile2026.length) {
-    throw new Error(`Le contrôle éditorial a écarté ${procedureCivile2026.length - publishedProcedureCivile2026.length} question(s) du lot procédure civile 2026.`)
+  if (qualityQuestions.length !== expectedQuestionCount || excluded.length !== 0) {
+    throw new Error(`Le contrôle éditorial a écarté ${excluded.length} question(s) du socle sain.`)
+  }
+  if (qualityQuestions.some((q) => q.subject !== 'Procédure civile' || !q.id.startsWith('PC26-CORR-'))) {
+    throw new Error('Une question étrangère au lot procédure civile 2026 a été détectée.')
   }
 
   await fs.writeFile(path.join(outputDir, 'questions.json'), JSON.stringify(qualityQuestions))
   await fs.writeFile(path.join(outputDir, 'cases.json'), JSON.stringify(uniqueCases))
   await fs.writeFile(path.join(outputDir, 'quality-report.json'), JSON.stringify(qualityReport, null, 2))
-  await fs.writeFile(path.join(outputDir, 'questions-editorial-review.json'), JSON.stringify(excluded.map(({ question, reasons }) => ({
-    id: question.id,
-    subject: question.subject,
-    topic: question.topic,
-    stem: question.stem,
-    options: question.options,
-    answers: question.answers,
-    explanation: question.explanation,
-    source: question.source,
-    mode: question.mode,
-    reasons,
-  })), null, 2))
+  await fs.writeFile(path.join(outputDir, 'questions-editorial-review.json'), JSON.stringify([], null, 2))
   await fs.writeFile(path.join(outputDir, 'meta.json'), JSON.stringify({
     generatedAt: new Date().toISOString(),
-    sourceQuestionCount: structurallyValid.length,
-    questionCount: qualityQuestions.length,
-    editorialReviewCount: excluded.length,
-    procedureCivileCorrectionQuestionCount: publishedProcedureCivile2026.length,
+    sourceQuestionCount: expectedQuestionCount,
+    questionCount: expectedQuestionCount,
+    editorialReviewCount: 0,
+    procedureCivileCorrectionQuestionCount: expectedQuestionCount,
+    cleanQuestionBase: true,
+    questionSources: ['Pré-Barreau 2026 — 12 corrigés de procédure civile'],
     caseCount: uniqueCases.length,
     correctedCaseCount: uniqueCases.filter((c) => c.status !== 'source_only').length,
     pendingCaseCount: uniqueCases.filter((c) => c.status === 'source_only').length,
-    importedFromLegacy: true,
+    importedFromLegacy: false,
   }, null, 2))
 
-  console.log(`[LexQCM] ${qualityQuestions.length} questions utiles conservées / ${excluded.length} questions retirées pour revue éditoriale / ${uniqueCases.length} dossiers.`)
-  console.log(`[LexQCM] ${publishedProcedureCivile2026.length} nouvelles questions de procédure civile issues des corrigés 2026.`)
-  qualityReport.categories.forEach((category) => console.log(`[LexQCM][qualité] ${category.count} — ${category.label}`))
+  console.log(`[LexQCM] Base QCM saine : ${qualityQuestions.length} questions de procédure civile, aucune question legacy.`)
+  console.log(`[LexQCM] ${uniqueCases.length} dossiers progressifs conservés indépendamment de la banque QCM.`)
 }
 
 await main()
