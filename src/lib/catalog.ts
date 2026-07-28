@@ -6,6 +6,12 @@ export type QuestionSource = {
   asOf?: string
 }
 
+export type LegalVerification = {
+  status?: string
+  label?: string
+  url?: string
+} | null
+
 export type LexQuestion = {
   id: string
   subject: string
@@ -18,6 +24,12 @@ export type LexQuestion = {
   answers: number[]
   explanation?: string
   optionExplanations?: string[]
+  legalRefs?: string[]
+  legalAuthorityStatus?: 'official-verified' | 'existing' | 'source-explicit' | 'case-exact' | 'case-source-match' | 'case-semantic-match' | 'missing' | string
+  legalAuthorityConfidence?: number
+  legalAuthorityOrigin?: string
+  verified?: LegalVerification
+  editorialSource?: QuestionSource
   source?: QuestionSource
   tags?: string[]
   active?: boolean
@@ -33,7 +45,7 @@ export type CaseQuestion = {
   explanation?: string
   reasoning?: string
   legalRefs?: string[]
-  verified?: { status?: string; label?: string; url?: string } | null
+  verified?: LegalVerification
   source?: QuestionSource
 }
 
