@@ -16,12 +16,17 @@ jobs:
         with:
           node-version: 24
       - run: npm install
-      - run: npm run import:legacy
+      - name: Import editorial question bank
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run import:legacy 2>&1 | tee import.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: lexqcm-content-quality
           path: |
+            import.log
             public/generated/meta.json
             public/generated/quality-report.json
             public/generated/questions-editorial-review.json
