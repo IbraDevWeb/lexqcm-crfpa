@@ -5,10 +5,11 @@ const questions = JSON.parse(await fs.readFile('public/generated/questions.json'
 const quality = JSON.parse(await fs.readFile('public/generated/quality-report.json', 'utf8'))
 const editorialReview = JSON.parse(await fs.readFile('public/generated/questions-editorial-review.json', 'utf8'))
 const cases = Number(meta.caseCount || 0)
-const expectedTotal = 240
+const expectedTotal = 360
 const expectedSets = [
   { subject: 'Procédure civile', prefix: 'PC26-CORR-', count: 120 },
   { subject: 'Droit des obligations', prefix: 'OB26-CORR-', count: 120 },
+  { subject: 'Droit social', prefix: 'DS26-CORR-', count: 120 },
 ]
 
 console.log(`[LexQCM] Banque QCM publiée : ${questions.length} questions.`)
