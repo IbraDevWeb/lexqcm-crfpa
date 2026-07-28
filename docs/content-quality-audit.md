@@ -1,15 +1,31 @@
 # Audit éditorial de la banque QCM
 
-Date de l’audit : 28 juillet 2026.
+Date de l’audit initial : 28 juillet 2026.
+Dernière extension contrôlée : corrigés de procédure civile 2026.
 
-## Résultat
+## Résultat actuel
 
-- Banque source analysée : **2 349 questions**.
-- Questions conservées dans l’entraînement : **1 658 questions**.
-- Questions retirées et placées en revue éditoriale : **691 questions**, soit **29,4 %** de la banque source.
+- Banque source analysée : **2 469 questions**.
+- Questions conservées dans l’entraînement : **1 778 questions**.
+- Questions retirées et placées en revue éditoriale : **691 questions**.
+- Nouvelles questions de procédure civile issues des corrigés 2026 : **120**, toutes admises par le contrôle éditorial.
 - Dossiers progressifs conservés : **42**, dont **40 corrigés** et **2 sujets sans corrigé**.
 
 Les 691 questions retirées correspondent au même défaut éditorial principal : elles demandent de retrouver un numéro d’article ou une référence documentaire, souvent avec des choix composés uniquement de numéros d’articles. Elles ne sont plus proposées dans les séries rapides, les entraînements sur mesure, les révisions adaptatives ou les examens blancs.
+
+## Lot procédure civile — corrigés 2026
+
+Les 120 nouvelles questions sont directement dérivées de douze corrigés Pré-Barreau 2026 : quatre épreuves estivales, quatre épreuves pré-estivales et quatre épreuves supplémentaires.
+
+Le lot comprend :
+
+- **107 QCM** à réponse unique ;
+- **13 QRM** à réponses multiples ;
+- **5 questions de niveau 1**, **73 de niveau 2** et **42 de niveau 3**.
+
+Les questions portent prioritairement sur la qualification et l’application : droit d’agir, demandes incidentes, associations, compétence, moyens de défense, nullités, signification, mise en état, appel, mesure d’instruction in futurum, référés, expertise, modes amiables, postulation et procédures d’exécution.
+
+Chaque question conserve une référence précise au corrigé et à la page utilisée. Le build vérifie que les **120 questions** sont présentes et qu’aucune n’est écartée par le filtre éditorial.
 
 ## Répartition des 691 questions retirées
 
@@ -45,6 +61,7 @@ Les questions retirées ne sont pas détruites. Le build génère séparément :
 
 - `public/generated/questions.json` : banque utile publiée ;
 - `public/generated/questions-editorial-review.json` : questions à réécrire ;
-- `public/generated/quality-report.json` : bilan agrégé par catégorie et matière.
+- `public/generated/quality-report.json` : bilan agrégé par catégorie et matière ;
+- `public/generated/meta.json` : compteurs de contrôle, dont le nombre de questions issues des corrigés de procédure civile 2026.
 
-Aucune question juridique nouvelle n’est générée automatiquement pour remplacer ces éléments : une réécriture doit rester fondée sur le cours ou le corrigé source afin de ne pas inventer une règle, une exception ou un distracteur juridiquement ambigu.
+Aucune question juridique nouvelle n’est générée automatiquement sans source. Toute question ajoutée doit rester fondée sur le cours ou le corrigé afin de ne pas inventer une règle, une exception ou un distracteur juridiquement ambigu.
