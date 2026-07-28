@@ -1,67 +1,51 @@
-# Audit éditorial de la banque QCM
+# Socle éditorial de la banque QCM
 
-Date de l’audit initial : 28 juillet 2026.
-Dernière extension contrôlée : corrigés de procédure civile 2026.
+Date de remise à zéro : 28 juillet 2026.
 
-## Résultat actuel
+## Base actuelle
 
-- Banque source analysée : **2 469 questions**.
-- Questions conservées dans l’entraînement : **1 778 questions**.
-- Questions retirées et placées en revue éditoriale : **691 questions**.
-- Nouvelles questions de procédure civile issues des corrigés 2026 : **120**, toutes admises par le contrôle éditorial.
-- Dossiers progressifs conservés : **42**, dont **40 corrigés** et **2 sujets sans corrigé**.
+La banque QCM a été entièrement remise à zéro. Elle contient désormais exclusivement :
 
-Les 691 questions retirées correspondent au même défaut éditorial principal : elles demandent de retrouver un numéro d’article ou une référence documentaire, souvent avec des choix composés uniquement de numéros d’articles. Elles ne sont plus proposées dans les séries rapides, les entraînements sur mesure, les révisions adaptatives ou les examens blancs.
-
-## Lot procédure civile — corrigés 2026
-
-Les 120 nouvelles questions sont directement dérivées de douze corrigés Pré-Barreau 2026 : quatre épreuves estivales, quatre épreuves pré-estivales et quatre épreuves supplémentaires.
-
-Le lot comprend :
-
+- **120 questions de procédure civile** ;
 - **107 QCM** à réponse unique ;
 - **13 QRM** à réponses multiples ;
-- **5 questions de niveau 1**, **73 de niveau 2** et **42 de niveau 3**.
+- **0 ancienne question legacy** ;
+- **0 question en attente de réécriture dans la banque active**.
 
-Les questions portent prioritairement sur la qualification et l’application : droit d’agir, demandes incidentes, associations, compétence, moyens de défense, nullités, signification, mise en état, appel, mesure d’instruction in futurum, référés, expertise, modes amiables, postulation et procédures d’exécution.
+Les 120 questions sont directement dérivées de douze corrigés Pré-Barreau 2026 : quatre épreuves estivales, quatre épreuves pré-estivales et quatre épreuves supplémentaires.
 
-Chaque question conserve une référence précise au corrigé et à la page utilisée. Le build vérifie que les **120 questions** sont présentes et qu’aucune n’est écartée par le filtre éditorial.
+Les anciens QCM provenant des fascicules, drills et générateurs précédents ne sont plus lus, fusionnés, comptés ou publiés. Le fichier source principal de l'ancienne banque a été supprimé de la branche `next-v2`.
 
-## Répartition des 691 questions retirées
+## Contenu du socle procédure civile
 
-| Matière | Questions en revue |
-|---|---:|
-| Procédure civile | 288 |
-| Droit des contrats | 231 |
-| Droit social | 63 |
-| Responsabilité civile | 60 |
-| Preuves | 25 |
-| Procédures civiles d’exécution | 24 |
+Le lot couvre prioritairement :
 
-## Politique éditoriale appliquée
+- le droit et la qualité à agir ;
+- les demandes reconventionnelles et interventions ;
+- les actions exercées par les associations ;
+- la compétence d'attribution et territoriale ;
+- les clauses attributives de compétence ;
+- les défenses au fond, exceptions de procédure et fins de non-recevoir ;
+- les nullités de forme et de fond ;
+- la signification et la représentation ;
+- le juge de la mise en état ;
+- l'appel et les recours contre les décisions sur la compétence ;
+- les mesures d'instruction avant procès ;
+- les référés et l'expertise judiciaire ;
+- les modes amiables ;
+- certaines procédures civiles d'exécution abordées dans les corrigés.
 
-Sont retirées de l’entraînement :
+Chaque question conserve une référence précise au corrigé et à la page utilisée.
 
-- les questions demandant un numéro d’article, un alinéa, une page ou un emplacement dans le plan ;
-- les questions demandant de réciter un mot ou une formulation exacte ;
-- les exercices de comptage ou de repérage sans conséquence juridique.
+## Règles de contrôle
 
-Sont conservées :
+À chaque développement et déploiement, le build vérifie automatiquement que :
 
-- les conditions d’application d’une règle ;
-- les effets juridiques, sanctions et exceptions ;
-- la qualification de faits ;
-- les distinctions entre régimes ;
-- les délais, seuils et chiffres lorsqu’ils produisent une conséquence juridique ;
-- les mini-cas et questions d’application.
+1. la banque contient exactement **120 questions** ;
+2. tous les identifiants commencent par `PC26-CORR-` ;
+3. toutes les questions appartiennent à la matière `Procédure civile` ;
+4. aucun identifiant n'est dupliqué ;
+5. aucune question n'est rejetée par le filtre éditorial ;
+6. les métadonnées indiquent explicitement qu'aucune banque QCM legacy n'est importée.
 
-## Traçabilité
-
-Les questions retirées ne sont pas détruites. Le build génère séparément :
-
-- `public/generated/questions.json` : banque utile publiée ;
-- `public/generated/questions-editorial-review.json` : questions à réécrire ;
-- `public/generated/quality-report.json` : bilan agrégé par catégorie et matière ;
-- `public/generated/meta.json` : compteurs de contrôle, dont le nombre de questions issues des corrigés de procédure civile 2026.
-
-Aucune question juridique nouvelle n’est générée automatiquement sans source. Toute question ajoutée doit rester fondée sur le cours ou le corrigé afin de ne pas inventer une règle, une exception ou un distracteur juridiquement ambigu.
+Une future matière sera ajoutée sous la forme d'un nouveau lot éditorial indépendant, construit à partir des cours ou corrigés transmis et soumis aux mêmes contrôles avant publication.
