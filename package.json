@@ -6,13 +6,13 @@
     "node": ">=22.0.0"
   },
   "scripts": {
-    "predev": "node scripts/import-legacy-v2.mjs && node scripts/enrich-legal-authorities.mjs",
+    "predev": "node scripts/import-legacy-v2.mjs && node scripts/enrich-legal-authorities.mjs && node scripts/refine-legal-authority-matches.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/import-legacy-v2.mjs && node scripts/enrich-legal-authorities.mjs",
+    "prebuild": "node scripts/import-legacy-v2.mjs && node scripts/enrich-legal-authorities.mjs && node scripts/refine-legal-authority-matches.mjs",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "import:legacy": "node scripts/import-legacy-v2.mjs && node scripts/enrich-legal-authorities.mjs && node scripts/debug-legal-matches.mjs"
+    "import:legacy": "node scripts/import-legacy-v2.mjs && node scripts/enrich-legal-authorities.mjs && node scripts/refine-legal-authority-matches.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.3",
@@ -23,8 +23,8 @@
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@types/react": "^24.0.0",
+    "@types/react-dom": "^24.0.0",
     "typescript": "^5.9.0"
   }
 }
