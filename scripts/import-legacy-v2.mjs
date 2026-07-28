@@ -44,6 +44,23 @@ async function readBank(file, assignment) {
   }
 }
 
+async function readQuestionDirectory(directory) {
+  const absolute = path.join(root, directory)
+  const entries = await fs.readdir(absolute, { withFileTypes: true })
+  const files = entries
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.json'))
+    .map((entry) => entry.name)
+    .sort((a, b) => a.localeCompare(b, 'fr'))
+
+  const questions = []
+  for (const file of files) {
+    const value = JSON.parse(await fs.readFile(path.join(absolute, file), 'utf8'))
+    if (!Array.isArray(value)) throw new Error(`${directory}/${file} ne contient pas un tableau de questions.`)
+    questions.push(...value)
+  }
+  return questions
+}
+
 function richer(a, b) {
   const left = Array.isArray(a) ? a : []
   const right = Array.isArray(b) ? b : []
@@ -63,6 +80,7 @@ async function main() {
 
   const dataQuestions = await readBank('data/questions.js', 'window.QUESTION_BANK=')
   const dataCases = await readBank('data/cases.js', 'window.CASE_BANK=')
+  const procedureCivile2026 = await readQuestionDirectory('data/procedure-civile-2026')
 
   let htmlQuestions = null
   let htmlCases = null
@@ -72,15 +90,24 @@ async function main() {
     htmlCases = extractAssignedJson(html, 'window.CASE_BANK=')
   } catch {}
 
-  const questions = richer(dataQuestions, htmlQuestions)
+  const legacyQuestions = richer(dataQuestions, htmlQuestions)
+  const questions = [...legacyQuestions, ...procedureCivile2026]
   const cases = richer(dataCases, htmlCases)
 
-  if (!questions.length) throw new Error('QUESTION_BANK introuvable dans la V1.')
+  if (!legacyQuestions.length) throw new Error('QUESTION_BANK introuvable dans la V1.')
   if (!cases.length) throw new Error('CASE_BANK introuvable dans la V1.')
+  if (procedureCivile2026.length !== 120) {
+    throw new Error(`Lot procédure civile 2026 incomplet : ${procedureCivile2026.length}/120 questions.`)
+  }
 
   const structurallyValid = [...new Map(questions.filter((q) => q.active !== false && validQuestion(q)).map((q) => [q.id, q])).values()]
   const { kept: qualityQuestions, excluded, report: qualityReport } = buildQualityReport(structurallyValid)
   const uniqueCases = [...new Map(cases.filter(validCase).map((c) => [c.id, c])).values()]
+  const publishedProcedureCivile2026 = qualityQuestions.filter((q) => q.id.startsWith('PC26-CORR-'))
+
+  if (publishedProcedureCivile2026.length !== procedureCivile2026.length) {
+    throw new Error(`Le contrôle éditorial a écarté ${procedureCivile2026.length - publishedProcedureCivile2026.length} question(s) du lot procédure civile 2026.`)
+  }
 
   await fs.writeFile(path.join(outputDir, 'questions.json'), JSON.stringify(qualityQuestions))
   await fs.writeFile(path.join(outputDir, 'cases.json'), JSON.stringify(uniqueCases))
@@ -102,6 +129,7 @@ async function main() {
     sourceQuestionCount: structurallyValid.length,
     questionCount: qualityQuestions.length,
     editorialReviewCount: excluded.length,
+    procedureCivileCorrectionQuestionCount: publishedProcedureCivile2026.length,
     caseCount: uniqueCases.length,
     correctedCaseCount: uniqueCases.filter((c) => c.status !== 'source_only').length,
     pendingCaseCount: uniqueCases.filter((c) => c.status === 'source_only').length,
@@ -109,6 +137,7 @@ async function main() {
   }, null, 2))
 
   console.log(`[LexQCM] ${qualityQuestions.length} questions utiles conservées / ${excluded.length} questions retirées pour revue éditoriale / ${uniqueCases.length} dossiers.`)
+  console.log(`[LexQCM] ${publishedProcedureCivile2026.length} nouvelles questions de procédure civile issues des corrigés 2026.`)
   qualityReport.categories.forEach((category) => console.log(`[LexQCM][qualité] ${category.count} — ${category.label}`))
 }
 
