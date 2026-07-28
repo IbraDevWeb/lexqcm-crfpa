@@ -63,6 +63,12 @@ async function readQuestionDirectory(directory) {
   return questions
 }
 
+function richer(a, b) {
+  const left = Array.isArray(a) ? a : []
+  const right = Array.isArray(b) ? b : []
+  return right.length > left.length ? right : left
+}
+
 function validQuestion(q) {
   return q && typeof q.id === 'string' && typeof q.subject === 'string' && typeof q.topic === 'string' && typeof q.stem === 'string' && Array.isArray(q.options) && q.options.length >= 2 && Array.isArray(q.answers) && q.answers.every((a) => Number.isInteger(a) && a >= 0 && a < q.options.length)
 }
@@ -77,9 +83,13 @@ async function main() {
   // Base saine : aucune ancienne QUESTION_BANK n'est lue ou fusionnée.
   // La banque QCM publiée provient exclusivement des lots éditoriaux validés ci-dessous.
   const sourceQuestions = await readQuestionDirectory(cleanQuestionDir)
-  const cases = await readAssignedBank('data/cases.js', 'window.CASE_BANK=')
 
-  if (!Array.isArray(cases) || !cases.length) throw new Error('CASE_BANK introuvable dans la V1.')
+  // Les dossiers progressifs sont un catalogue distinct des QCM et restent conservés.
+  const dataCases = await readAssignedBank('data/cases.js', 'window.CASE_BANK=')
+  const htmlCases = await readAssignedBank('index.html', 'window.CASE_BANK=')
+  const cases = richer(dataCases, htmlCases)
+
+  if (!cases.length) throw new Error('CASE_BANK introuvable dans les sources existantes.')
   if (sourceQuestions.length !== expectedQuestionCount) {
     throw new Error(`Lot procédure civile 2026 incomplet : ${sourceQuestions.length}/${expectedQuestionCount} questions.`)
   }
