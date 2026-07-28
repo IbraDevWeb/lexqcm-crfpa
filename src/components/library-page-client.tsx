@@ -8,12 +8,24 @@ import { useProgress } from '@/lib/use-progress'
 
 type View = 'errors' | 'stats' | 'bank' | 'updates' | 'quality'
 
+type QualityReport = {
+  generatedAt?: string
+  inputCount: number
+  keptCount: number
+  excludedCount: number
+  excludedRate: number
+  categories: { id: string; label: string; count: number; samples?: { id: string; subject: string; topic: string; stem: string }[] }[]
+  subjects: { subject: string; count: number }[]
+  policy?: { excluded?: string[]; preserved?: string[] }
+}
+
 function pct(a: number, b: number) { return b ? Math.round((a / b) * 100) : 0 }
 function formatDate(value?: string | null) { return value ? new Date(`${value}T12:00:00`).toLocaleDateString('fr-FR') : '—' }
 
 export function LibraryPageClient({ view }: { view: View }) {
   const [questions, setQuestions] = useState<LexQuestion[]>([])
   const [cases, setCases] = useState<LexCase[]>([])
+  const [qualityReport, setQualityReport] = useState<QualityReport | null>(null)
   const [loadingCatalog, setLoadingCatalog] = useState(true)
   const [catalogError, setCatalogError] = useState('')
   const { progress, loading: loadingProgress, syncing, online } = useProgress()
@@ -21,14 +33,16 @@ export function LibraryPageClient({ view }: { view: View }) {
   useEffect(() => {
     const load = async () => {
       try {
-        const [q, c] = await Promise.all([
+        const [q, c, quality] = await Promise.all([
           fetch('/generated/questions.json', { cache: 'no-store' }),
           fetch('/generated/cases.json', { cache: 'no-store' }),
+          fetch('/generated/quality-report.json', { cache: 'no-store' }),
         ])
         if (!q.ok || !c.ok) throw new Error('Impossible de charger la banque LexQCM.')
         const [qv, cv] = await Promise.all([q.json(), c.json()])
         setQuestions(Array.isArray(qv) ? qv : [])
         setCases(Array.isArray(cv) ? cv : [])
+        if (quality.ok) setQualityReport(await quality.json())
       } catch (error) {
         setCatalogError(error instanceof Error ? error.message : 'Banque indisponible.')
       } finally {
@@ -67,12 +81,12 @@ export function LibraryPageClient({ view }: { view: View }) {
       return { subject, answers: history.length, correct, seen, total, rate: pct(correct, history.length) }
     })
     const completedCases = Object.values(progress.caseStats).filter((s) => s.completed).length
-    const due = questions.filter((q) => isDue(progress, q.id)).length
+    const due = questions.filter((q) => Boolean(progress.questionStats[q.id]?.seen) && isDue(progress, q.id)).length
     return <>
       <div className="top"><div><h1>Statistiques</h1><p>Une vue complète de ta progression, désormais synchronisée avec ton compte.</p></div>{syncBadge}</div>
       <div className="statsGrid">
         <div className="card statBig"><span>Réussite globale</span><b>{pct(progress.correct, progress.answered)}%</b><small>{progress.correct}/{progress.answered} réponses correctes</small></div>
-        <div className="card statBig"><span>Révisions dues</span><b>{due}</b><small>questions à revoir</small></div>
+        <div className="card statBig"><span>Révisions dues</span><b>{due}</b><small>questions déjà étudiées à revoir</small></div>
         <div className="card statBig"><span>Dossiers terminés</span><b>{completedCases}/{cases.filter((c) => c.status !== 'source_only').length}</b><small>{progress.caseHistory.length} étapes répondues</small></div>
         <div className="card statBig"><span>Série</span><b>{progress.streak}</b><small>jour{progress.streak > 1 ? 's' : ''}</small></div>
       </div>
@@ -96,18 +110,25 @@ export function LibraryPageClient({ view }: { view: View }) {
   const pending = cases.filter((c) => c.status === 'source_only')
   const qrm = questions.filter((q) => q.type === 'multiple' || q.answers.length > 1).length
   const caseSteps = ready.reduce((sum, c) => sum + (c.questions?.length || 0), 0)
+  const sourceCount = qualityReport?.inputCount ?? questions.length
+  const reviewCount = qualityReport?.excludedCount ?? 0
+
   return <>
-    <div className="top"><div><h1>Qualité & sources</h1><p>Traçabilité de la banque, des corrigés et des actualisations utilisées par LexQCM.</p></div><span className="badge badgeGood">Contrôles structurels actifs</span></div>
-    <div className="alert successBox"><b>Banque migrée sans réduction :</b> les 2 349 QCM/QRM et les dossiers progressifs restent la base de la V2. Les comptes utilisateurs ajoutent la synchronisation, ils ne remplacent pas le contenu de la V1.</div>
+    <div className="top"><div><h1>Qualité & sources</h1><p>La banque publiée privilégie l’application juridique plutôt que le repérage mécanique dans les fascicules.</p></div><span className="badge badgeGood">Filtre éditorial actif</span></div>
+    <div className="alert successBox"><b>Qualité avant quantité :</b> {questions.length.toLocaleString('fr-FR')} questions utiles sont actives. {reviewCount.toLocaleString('fr-FR')} questions de repérage documentaire ont été retirées de l’entraînement et conservées séparément pour réécriture, sans suppression de la source d’origine.</div>
     <div className="qualityGrid">
-      <div className="qualityItem"><b>{questions.length.toLocaleString('fr-FR')}</b><span>questions actives</span></div>
-      <div className="qualityItem"><b>{qrm}</b><span>QRM</span></div>
+      <div className="qualityItem"><b>{questions.length.toLocaleString('fr-FR')}</b><span>questions utiles actives</span></div>
+      <div className="qualityItem"><b>{reviewCount.toLocaleString('fr-FR')}</b><span>questions en revue éditoriale</span></div>
+      <div className="qualityItem"><b>{sourceCount.toLocaleString('fr-FR')}</b><span>questions dans la banque source</span></div>
+      <div className="qualityItem"><b>{qrm}</b><span>QRM actifs</span></div>
       <div className="qualityItem"><b>{ready.length}</b><span>dossiers corrigés</span></div>
       <div className="qualityItem"><b>{caseSteps}</b><span>étapes contextuelles</span></div>
-      <div className="qualityItem"><b>{pending.length}</b><span>sujets sans corrigé</span></div>
-      <div className="qualityItem"><b>{questions.filter(isOfficialUpdate).length}</b><span>actualisations isolées</span></div>
     </div>
-    <section className="card qualityDetail"><h2>Niveaux documentaires</h2><div className="row"><span>Fascicules de cours</span><b>Banque QCM/QRM</b></div><div className="row"><span>Sujets + corrigés fournis</span><b>Dossiers progressifs</b></div><div className="row"><span>Sujets sans corrigé</span><b>Aucune solution inventée</b></div><div className="row"><span>Règles sensibles postérieures aux cours</span><b>Couche Actualisations 2026</b></div></section>
+    {qualityReport && <div className="qualityEditorialGrid">
+      <section className="card qualityDetail"><div className="sectionHead"><div><span className="sectionKicker">AUDIT AUTOMATISÉ</span><h2>Questions retirées</h2></div><span className="badge badgeWarn">{qualityReport.excludedRate}% de la source</span></div>{qualityReport.categories.map((category) => <div className="row" key={category.id}><span>{category.label}</span><b>{category.count}</b></div>)}</section>
+      <section className="card qualityDetail"><div className="sectionHead"><div><span className="sectionKicker">RÉPARTITION</span><h2>Matières à réécrire</h2></div></div>{qualityReport.subjects.map((subject) => <div className="row" key={subject.subject}><span>{subject.subject}</span><b>{subject.count}</b></div>)}</section>
+    </div>}
+    <section className="card qualityDetail"><h2>Politique éditoriale</h2><div className="row"><span>Numéro d’article, page ou emplacement à retrouver</span><b>Retiré de l’entraînement</b></div><div className="row"><span>Mot ou formulation exacte à réciter</span><b>Retiré de l’entraînement</b></div><div className="row"><span>Condition, effet, sanction ou distinction de régime</span><b>Conservé</b></div><div className="row"><span>Délai ou seuil produisant une conséquence juridique</span><b>Conservé</b></div><div className="row"><span>Qualification ou application à des faits</span><b>Prioritaire</b></div><div className="row"><span>Sujets sans corrigé</span><b>{pending.length} · aucune solution inventée</b></div></section>
   </>
 }
 
@@ -128,7 +149,7 @@ function BankView({ questions }: { questions: LexQuestion[] }) {
   const rows = filtered.slice((current - 1) * pageSize, current * pageSize)
   const update = (fn: () => void) => { fn(); setPage(1) }
   return <>
-    <div className="top"><div><h1>Banque QCM</h1><p>{questions.length.toLocaleString('fr-FR')} questions chargées avec matière, thème, type, mode et source.</p></div><Link className="btn btnPrimary" href="/train">Créer une série</Link></div>
+    <div className="top"><div><h1>Banque QCM</h1><p>{questions.length.toLocaleString('fr-FR')} questions utiles, après retrait des exercices de simple repérage documentaire.</p></div><Link className="btn btnPrimary" href="/train">Créer une série</Link></div>
     <div className="card">
       <div className="filters"><input value={search} onChange={(e) => update(() => setSearch(e.target.value))} placeholder="Rechercher dans les questions…" /><select value={subject} onChange={(e) => update(() => setSubject(e.target.value))}><option value="">Toutes les matières</option>{subjects.map((s) => <option key={s}>{s}</option>)}</select><select value={mode} onChange={(e) => update(() => setMode(e.target.value))}><option value="">Tous les modes</option><option value="curated">QCM validés</option><option value="case">Cas pratiques</option><option value="synthesis">QRM synthèse</option><option value="drill">Drills mémoire</option><option value="update">Actualisations 2026</option></select><select value={type} onChange={(e) => update(() => setType(e.target.value))}><option value="">QCM + QRM</option><option value="single">Réponse unique</option><option value="multiple">Multi-réponses</option></select></div>
       <div className="bankCount">{filtered.length.toLocaleString('fr-FR')} résultat{filtered.length > 1 ? 's' : ''}</div>
