@@ -32,13 +32,14 @@ export function TopicPicker({
   onChange,
 }: {
   options: TopicOption[]
-  value: string
+  value: string[]
   disabled?: boolean
-  onChange: (value: string) => void
+  onChange: (value: string[]) => void
 }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [activeIndex, setActiveIndex] = useState(0)
+  const [draft, setDraft] = useState<string[]>(value)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const filtered = useMemo(() => {
@@ -47,27 +48,50 @@ export function TopicPicker({
     return options.filter((option) => normalize(`${displayLabel(option.value)} ${option.value}`).includes(needle))
   }, [options, query])
 
+  const chosenOptions = useMemo(() => options.filter((option) => value.includes(option.value)), [options, value])
+  const chosenQuestions = chosenOptions.reduce((sum, option) => sum + option.count, 0)
+  const allVisibleSelected = filtered.length > 0 && filtered.every((option) => draft.includes(option.value))
+
   useEffect(() => {
     if (!open) return
+    setDraft(value)
     const timer = window.setTimeout(() => inputRef.current?.focus(), 20)
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false)
+      if (event.key === 'Escape') closeWithoutSaving()
     }
     window.addEventListener('keydown', onKeyDown)
     return () => {
       window.clearTimeout(timer)
       window.removeEventListener('keydown', onKeyDown)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
   useEffect(() => {
     setActiveIndex(0)
   }, [query, options])
 
-  function choose(next: string) {
-    onChange(next)
+  function closeWithoutSaving() {
+    setDraft(value)
     setQuery('')
     setOpen(false)
+  }
+
+  function apply() {
+    onChange(draft)
+    setQuery('')
+    setOpen(false)
+  }
+
+  function toggle(next: string) {
+    setDraft((current) => current.includes(next) ? current.filter((item) => item !== next) : [...current, next])
+  }
+
+  function toggleVisible() {
+    const visibleValues = new Set(filtered.map((option) => option.value))
+    setDraft((current) => allVisibleSelected
+      ? current.filter((item) => !visibleValues.has(item))
+      : [...new Set([...current, ...visibleValues])])
   }
 
   function handleSearchKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -81,11 +105,23 @@ export function TopicPicker({
     }
     if (event.key === 'Enter' && filtered[activeIndex]) {
       event.preventDefault()
-      choose(filtered[activeIndex].value)
+      toggle(filtered[activeIndex].value)
     }
   }
 
-  const selected = options.find((option) => option.value === value)
+  const mainLabel = disabled
+    ? 'Choisis d’abord une matière'
+    : value.length === 0
+      ? 'Tous les thèmes'
+      : value.length === 1
+        ? displayLabel(value[0])
+        : `${value.length} thèmes sélectionnés`
+
+  const subLabel = disabled
+    ? 'Les thèmes dépendent de la matière'
+    : value.length === 0
+      ? `${options.length} thèmes disponibles`
+      : `${chosenQuestions} question${chosenQuestions > 1 ? 's' : ''} dans la sélection`
 
   return <div className={styles.root}>
     <button
@@ -96,16 +132,18 @@ export function TopicPicker({
       disabled={disabled}
       onClick={() => setOpen((current) => !current)}
     >
-      <span className={styles.triggerText}>
-        <strong>{selected ? displayLabel(selected.value) : disabled ? 'Choisis d’abord une matière' : 'Tous les thèmes'}</strong>
-        <span>{disabled ? 'Le thème dépend de la matière' : selected ? `${selected.count} question${selected.count > 1 ? 's' : ''}` : `${options.length} thèmes disponibles`}</span>
-      </span>
+      <span className={styles.triggerText}><strong>{mainLabel}</strong><span>{subLabel}</span></span>
+      {value.length > 1 && <span className={styles.selectedBubble}>{value.length}</span>}
       <span className={`${styles.chevron} ${open ? styles.chevronOpen : ''}`} aria-hidden>⌄</span>
     </button>
 
     {open && <>
-      <button type="button" className={styles.backdrop} aria-label="Fermer la liste des thèmes" onClick={() => setOpen(false)} />
-      <div className={styles.panel} role="dialog" aria-label="Choisir un chapitre ou un thème">
+      <button type="button" className={styles.backdrop} aria-label="Fermer la liste des thèmes" onClick={closeWithoutSaving} />
+      <div className={styles.panel} role="dialog" aria-modal="true" aria-label="Choisir plusieurs chapitres ou thèmes">
+        <div className={styles.panelHeader}>
+          <div><strong>Choisir les thèmes</strong><span>Tu peux en sélectionner plusieurs pour composer une série plus longue.</span></div>
+          <button type="button" className={styles.closeButton} aria-label="Fermer" onClick={closeWithoutSaving}>×</button>
+        </div>
         <div className={styles.searchWrap}>
           <span className={styles.searchIcon} aria-hidden>⌕</span>
           <input
@@ -118,26 +156,33 @@ export function TopicPicker({
             aria-label="Rechercher un chapitre ou un thème"
           />
         </div>
-        <div className={styles.list} role="listbox">
-          {!query && <button type="button" className={`${styles.option} ${!value ? styles.optionSelected : ''}`} onClick={() => choose('')} role="option" aria-selected={!value}>
-            <span className={styles.optionMain}><strong>Tous les thèmes</strong><small>Toute la matière</small></span>
-            <span className={styles.count}>{options.reduce((sum, option) => sum + option.count, 0)}</span>
-          </button>}
-          {filtered.map((option, index) => <button
-            type="button"
-            key={option.value}
-            className={`${styles.option} ${index === activeIndex ? styles.optionActive : ''} ${value === option.value ? styles.optionSelected : ''}`}
-            onMouseEnter={() => setActiveIndex(index)}
-            onClick={() => choose(option.value)}
-            role="option"
-            aria-selected={value === option.value}
-          >
-            <span className={styles.optionMain}><strong>{displayLabel(option.value)}</strong><small>{sectionLabel(option.value)}</small></span>
-            <span className={styles.count}>{option.count}</span>
-          </button>)}
+        <div className={styles.quickActions}>
+          <button type="button" onClick={() => setDraft([])}>Toute la matière</button>
+          <button type="button" onClick={toggleVisible}>{allVisibleSelected ? 'Désélectionner les résultats' : 'Sélectionner les résultats'}</button>
+        </div>
+        <div className={styles.list} role="listbox" aria-multiselectable="true">
+          {filtered.map((option, index) => {
+            const checked = draft.includes(option.value)
+            return <button
+              type="button"
+              key={option.value}
+              className={`${styles.option} ${index === activeIndex ? styles.optionActive : ''} ${checked ? styles.optionSelected : ''}`}
+              onMouseEnter={() => setActiveIndex(index)}
+              onClick={() => toggle(option.value)}
+              role="option"
+              aria-selected={checked}
+            >
+              <span className={`${styles.checkbox} ${checked ? styles.checkboxChecked : ''}`} aria-hidden>{checked ? '✓' : ''}</span>
+              <span className={styles.optionMain}><strong>{displayLabel(option.value)}</strong><small>{sectionLabel(option.value)}</small></span>
+              <span className={styles.count}>{option.count}</span>
+            </button>
+          })}
           {!filtered.length && <div className={styles.empty}>Aucun thème ne correspond à « {query} ».</div>}
         </div>
-        <div className={styles.footer}><span>{filtered.length} résultat{filtered.length > 1 ? 's' : ''}</span>{value && <button type="button" className={styles.clear} onClick={() => choose('')}>Effacer le filtre</button>}</div>
+        <div className={styles.footer}>
+          <div className={styles.selectionSummary}><strong>{draft.length || 'Tous'}</strong><span>{draft.length ? ` thème${draft.length > 1 ? 's' : ''} sélectionné${draft.length > 1 ? 's' : ''}` : ' les thèmes seront inclus'}</span></div>
+          <div className={styles.footerActions}><button type="button" className={styles.cancel} onClick={closeWithoutSaving}>Annuler</button><button type="button" className={styles.apply} onClick={apply}>Appliquer</button></div>
+        </div>
       </div>
     </>}
   </div>
