@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { emptyProgress, normalizeProgress, type ProgressState } from '@/lib/progress'
 
-export const PROGRESS_LOCAL_KEY = 'lexqcm_next_progress_v4'
-const OLD_LOCAL_KEYS = ['lexqcm_next_progress_v3', 'lexqcm_crfpa_v1_state']
+export const PROGRESS_LOCAL_KEY = 'lexqcm_next_progress_v5'
+const OLD_LOCAL_KEYS = ['lexqcm_next_progress_v4', 'lexqcm_next_progress_v3', 'lexqcm_crfpa_v1_state']
 
 export function useProgress() {
   const [progress, setProgress] = useState<ProgressState>(emptyProgress())
@@ -41,18 +41,25 @@ export function useProgress() {
     setError('')
     try {
       const response = await fetch('/api/progress', { cache: 'no-store' })
-      const cloud = response.ok ? normalizeProgress((await response.json()).progress) : emptyProgress()
+      const cloudPayload = response.ok ? (await response.json()).progress : null
+      const cloud = normalizeProgress(cloudPayload)
+      const cloudWasMigrated = Boolean(cloudPayload && typeof cloudPayload === 'object' && Number(cloudPayload.version) !== 5)
 
       let local = emptyProgress()
+      let localWasMigrated = false
       const candidates = [PROGRESS_LOCAL_KEY, ...OLD_LOCAL_KEYS]
       for (const key of candidates) {
         const raw = localStorage.getItem(key)
         if (!raw) continue
         try {
-          const parsed = normalizeProgress(JSON.parse(raw))
+          const rawValue = JSON.parse(raw)
+          const parsed = normalizeProgress(rawValue)
           const parsedWeight = parsed.answered + parsed.caseHistory.length
           const localWeight = local.answered + local.caseHistory.length
-          if (parsedWeight > localWeight) local = parsed
+          if (parsedWeight > localWeight) {
+            local = parsed
+            localWasMigrated = Number(rawValue?.version) !== 5
+          }
         } catch {}
       }
 
@@ -61,7 +68,9 @@ export function useProgress() {
       const chosen = localWeight > cloudWeight ? local : cloud
       setProgress(chosen)
       localStorage.setItem(PROGRESS_LOCAL_KEY, JSON.stringify(chosen))
-      if (localWeight > cloudWeight) void syncCloud(chosen)
+
+      OLD_LOCAL_KEYS.forEach((key) => localStorage.removeItem(key))
+      if (localWeight > cloudWeight || cloudWasMigrated || localWasMigrated) void syncCloud(chosen)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Progression indisponible.')
     } finally {
