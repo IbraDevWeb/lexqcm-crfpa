@@ -19,6 +19,13 @@ const cleanQuestionSets = [
     prefix: 'OB26-CORR-',
     label: 'Pré-Barreau 2026 — 12 corrigés de droit des obligations',
   },
+  {
+    directory: 'data/droit-social-2026',
+    expected: 120,
+    subject: 'Droit social',
+    prefix: 'DS26-CORR-',
+    label: 'Pré-Barreau et Objectif Barreau 2026 — 12 corrigés de droit social',
+  },
 ]
 
 function extractAssignedJson(source, assignment) {
@@ -151,6 +158,7 @@ async function main() {
     editorialReviewCount: 0,
     procedureCivileCorrectionQuestionCount: countsBySubject['Procédure civile'],
     obligationsCorrectionQuestionCount: countsBySubject['Droit des obligations'],
+    droitSocialCorrectionQuestionCount: countsBySubject['Droit social'],
     questionsBySubject: countsBySubject,
     cleanQuestionBase: true,
     questionSources: cleanQuestionSets.map((set) => set.label),
