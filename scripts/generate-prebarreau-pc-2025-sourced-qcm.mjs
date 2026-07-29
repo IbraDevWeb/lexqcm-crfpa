@@ -19,6 +19,15 @@ function normalize(value) {
     .toLowerCase()
 }
 
+function cleanRule(value) {
+  return String(value || '')
+    .replace(/\bréceptionou\b/gi, 'réception ou')
+    .replace(/\bd’unou\b/gi, 'd’un ou')
+    .replace(/\bnonouvrable\b/gi, 'non ouvrable')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 function stableTie(value) {
   return createHash('sha1').update(value).digest('hex')
 }
@@ -112,7 +121,7 @@ function buildQuestions(records) {
       stem: `Dans le corrigé ${record.documentCode}, page ${record.page}, quelle règle relative à « ${record.topic} » est directement fondée sur le visa suivant : ${visaText(record)} ?`,
       options: [record.rule, ...ruleDistractors.map((candidate) => candidate.value)],
       answers: [0],
-      explanation: `${record.rule}\n\nFondement juridique — ${visaText(record)}.\n\nTraçabilité éditoriale — ${editorialLabel}.`,
+      explanation: `${record.rule}\n\nTraçabilité éditoriale — ${editorialLabel}.\n\nFondement juridique — ${visaText(record)}.`,
       optionExplanations: [
         `Correct : cette règle est expressément rattachée à ${visaText(record)} dans le corrigé.`,
         ...ruleDistractors.map((candidate) => `Cette proposition correspond à ${visaText(candidate.record)}, et non au visa demandé.`),
@@ -124,7 +133,7 @@ function buildQuestions(records) {
       stem: `Dans le corrigé ${record.documentCode}, page ${record.page}, quel visa juridique correspond à la règle suivante : « ${record.rule.replace(/[. ]+$/, '')} » ?`,
       options: [visaText(record), ...visaDistractors.map((candidate) => candidate.value)],
       answers: [0],
-      explanation: `Le visa correspondant est ${visaText(record)}. La règle contrôlée est la suivante : ${record.rule}\n\nFondement juridique — ${visaText(record)}.\n\nTraçabilité éditoriale — ${editorialLabel}.`,
+      explanation: `Le visa correspondant est ${visaText(record)}. La règle contrôlée est la suivante : ${record.rule}\n\nTraçabilité éditoriale — ${editorialLabel}.\n\nFondement juridique — ${visaText(record)}.`,
       optionExplanations: [
         `Correct : le corrigé rattache directement cette règle à ${visaText(record)}.`,
         ...visaDistractors.map((candidate) => `Ce visa fonde une autre règle du corpus : ${candidate.record.rule}`),
@@ -178,6 +187,7 @@ async function readRecords() {
     if (!document) throw new Error(`Document inconnu pour ${record.documentCode}.`)
     return {
       ...record,
+      rule: cleanRule(record.rule),
       documentTitle: document.title,
       sourceFile: document.sourceFile,
     }
