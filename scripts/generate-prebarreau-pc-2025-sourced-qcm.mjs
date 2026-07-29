@@ -136,7 +136,7 @@ function buildQuestions(records) {
 
 function validateRecord(record, index) {
   if (!record || typeof record !== 'object') throw new Error(`Registre ${index + 1} invalide.`)
-  for (const field of ['documentCode', 'documentTitle', 'sourceFile', 'rule', 'topic', 'sourceExcerpt']) {
+  for (const field of ['documentCode', 'documentTitle', 'sourceFile', 'rule', 'topic']) {
     if (typeof record[field] !== 'string' || !record[field].trim()) throw new Error(`Registre ${index + 1} : champ ${field} absent.`)
   }
   if (!Number.isInteger(record.page) || record.page < 1) throw new Error(`Registre ${index + 1} : page invalide.`)
@@ -159,19 +159,29 @@ function validateQuestion(question) {
 }
 
 async function readRecords() {
-  const entries = (await fs.readdir(sourceDir, { withFileTypes: true }))
-    .filter((entry) => entry.isFile() && /^records-(?:SUP|EST)-\d{2}\.json$/.test(entry.name))
-    .map((entry) => entry.name)
-    .sort((left, right) => {
-      const rank = (name) => name.includes('-SUP-') ? 0 : 1
-      return rank(left) - rank(right) || left.localeCompare(right, 'fr')
-    })
-  if (entries.length !== 15) throw new Error(`Fichiers source Pré-Barreau incomplets : ${entries.length}/15.`)
-  const batches = await Promise.all(entries.map((entry) => fs.readFile(path.join(sourceDir, entry), 'utf8').then(JSON.parse)))
-  if (batches.some((batch) => !Array.isArray(batch) || batch.length !== 10)) {
-    throw new Error('Un fichier source Pré-Barreau ne contient pas exactement 10 registres.')
+  const manifest = JSON.parse(await fs.readFile(path.join(sourceDir, 'manifest.json'), 'utf8'))
+  if (!Array.isArray(manifest.documents) || manifest.documents.length !== 15 || Number(manifest.sourceRecordCount) !== EXPECTED_RECORDS) {
+    throw new Error('Manifeste Pré-Barreau 2025 incomplet.')
   }
-  return batches.flat()
+  const documents = new Map(manifest.documents.map((document) => [document.documentCode, document]))
+  const entries = (await fs.readdir(sourceDir, { withFileTypes: true }))
+    .filter((entry) => entry.isFile() && /^records-batch-\d{2}\.json$/.test(entry.name))
+    .map((entry) => entry.name)
+    .sort((left, right) => left.localeCompare(right, 'fr'))
+  if (entries.length !== 5) throw new Error(`Lots source Pré-Barreau incomplets : ${entries.length}/5.`)
+  const batches = await Promise.all(entries.map((entry) => fs.readFile(path.join(sourceDir, entry), 'utf8').then(JSON.parse)))
+  if (batches.some((batch) => !Array.isArray(batch) || batch.length !== 30)) {
+    throw new Error('Un lot source Pré-Barreau ne contient pas exactement 30 registres.')
+  }
+  return batches.flat().map((record) => {
+    const document = documents.get(record.documentCode)
+    if (!document) throw new Error(`Document inconnu pour ${record.documentCode}.`)
+    return {
+      ...record,
+      documentTitle: document.title,
+      sourceFile: document.sourceFile,
+    }
+  })
 }
 
 async function main() {
