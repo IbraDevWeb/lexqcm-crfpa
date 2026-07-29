@@ -1,4 +1,4 @@
-const CACHE = 'lexqcm-next-v2-clean-qcm-9'
+const CACHE = 'lexqcm-next-v2-clean-qcm-10'
 const CORE = ['/offline', '/manifest.webmanifest', '/icon.svg', '/generated/questions.json', '/generated/cases.json', '/generated/meta.json', '/generated/quality-report.json', '/generated/legal-authority-report.json']
 
 self.addEventListener('install', (event) => {
