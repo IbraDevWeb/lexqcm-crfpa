@@ -7,8 +7,9 @@ const authority = JSON.parse(await fs.readFile('public/generated/legal-authority
 const quality = JSON.parse(await fs.readFile('public/generated/quality-report.json', 'utf8'))
 const editorialReview = JSON.parse(await fs.readFile('public/generated/questions-editorial-review.json', 'utf8'))
 
-const expectedSourceTotal = 900
+const expectedSourceTotal = 1200
 const expectedIejTotal = 360
+const expectedPrebarreauTotal = 300
 const expectedOptionOrderVersion = 3
 const expectedSets = [
   { subject: 'Procédure civile', prefix: 'PC26-CORR-', count: 120 },
@@ -18,6 +19,7 @@ const expectedSets = [
   { subject: 'Procédure civile', prefix: 'IEJ26-PC-', count: 120 },
   { subject: 'Droit des obligations', prefix: 'IEJ26-OB-', count: 120 },
   { subject: 'Droit social', prefix: 'IEJ26-DS-', count: 120 },
+  { subject: 'Procédure civile', prefix: 'PB25-PC-VISA-', count: 300 },
 ]
 const trustedStatuses = new Set(Array.isArray(meta.trustedLegalAuthorityStatuses) ? meta.trustedLegalAuthorityStatuses : [])
 
@@ -34,7 +36,7 @@ function normalize(value) {
 function isPreciseLegalReference(value) {
   const text = normalize(value)
   return /\d/.test(text)
-    && /\b(article|articles|art\.?|cpc|code|cass\.?|civ\.?|soc\.?|com\.?|crim\.?|ass\.? plen\.?|conseil d'etat|\bce\b|cjue|cedh|loi|decret|reglement|directive)\b/.test(text)
+    && /\b(article|articles|art\.?|cpc|cpce|coj|code|cass\.?|civ\.?|soc\.?|com\.?|crim\.?|ch\.? mixte|ass\.? plen\.?|conseil constitutionnel|conseil d'etat|\bce\b|cjue|cedh|loi|decret|reglement|directive|avis)\b/.test(text)
 }
 
 function hasLegalAuthority(question) {
@@ -115,6 +117,7 @@ const directPublished = questions.filter((question) => question.catalogOrigin ==
 const cleanSocle = [...cleanPublished, ...legalReview]
 const completeCatalog = [...questions, ...legalReview]
 const iejPublished = questions.filter((question) => String(question.id).startsWith('IEJ26-'))
+const prebarreauPublished = questions.filter((question) => String(question.id).startsWith('PB25-PC-VISA-'))
 
 if (cleanSocle.length !== expectedSourceTotal || Number(meta.sourceQuestionCount) !== expectedSourceTotal) {
   throw new Error(`Le socle éditorial doit contenir ${expectedSourceTotal} QCM, ${cleanSocle.length} détectés.`)
@@ -122,10 +125,16 @@ if (cleanSocle.length !== expectedSourceTotal || Number(meta.sourceQuestionCount
 if (iejPublished.length !== expectedIejTotal || Number(meta.iejSorbonne2026QuestionCount) !== expectedIejTotal) {
   throw new Error(`Le lot IEJ Sorbonne doit contenir ${expectedIejTotal} QCM publiés, ${iejPublished.length} détectés.`)
 }
+if (prebarreauPublished.length !== expectedPrebarreauTotal || Number(meta.prebarreauPc2025SourcedQuestionCount) !== expectedPrebarreauTotal) {
+  throw new Error(`Le lot Pré-Barreau 2025 doit contenir ${expectedPrebarreauTotal} QCM publiés, ${prebarreauPublished.length} détectés.`)
+}
+if (Number(meta.prebarreauPc2025ExplicitSourceCount) !== expectedPrebarreauTotal || Number(meta.prebarreauPc2025SourceDocumentCount) !== 15) {
+  throw new Error('Les métadonnées de provenance Pré-Barreau 2025 sont incomplètes.')
+}
 if (questions.length !== Number(meta.questionCount) || legalReview.length !== Number(meta.legalReviewCount)) throw new Error('Les métadonnées de publication sont incohérentes.')
 if (cleanPublished.length !== Number(meta.trustedCleanQuestionCount) || directPublished.length !== Number(meta.directCaseQuestionCount)) throw new Error('Les métadonnées d’origine de la banque active sont incohérentes.')
 if (editorialReview.length !== 0 || Number(meta.editorialReviewCount) !== 0 || Number(quality.excludedCount) !== 0) throw new Error('Des QCM ont été écartés par le contrôle éditorial.')
-if (Number(quality.inputCount) !== expectedSourceTotal || Number(quality.keptCount) !== expectedSourceTotal) throw new Error('Le rapport qualité ne couvre pas les 900 QCM du socle.')
+if (Number(quality.inputCount) !== expectedSourceTotal || Number(quality.keptCount) !== expectedSourceTotal) throw new Error('Le rapport qualité ne couvre pas les 1 200 QCM du socle.')
 if (Number(meta.optionOrderVersion) !== expectedOptionOrderVersion || Number(quality.optionOrderVersion) !== expectedOptionOrderVersion) throw new Error('La version finale de répartition des réponses est incorrecte.')
 if (Number(authority.publishedQuestionCount) !== questions.length || Number(authority.quarantinedQuestionCount) !== legalReview.length || Number(authority.publishedCoverageRate) !== 100) {
   throw new Error('Le rapport des visas ne correspond pas à la banque publiée.')
@@ -136,7 +145,7 @@ for (const set of expectedSets) {
   if (matches.length !== set.count) throw new Error(`Lot ${set.prefix} incomplet : ${matches.length}/${set.count}.`)
 }
 if (cleanSocle.some((question) => !expectedSets.some((set) => question.subject === set.subject && String(question.id).startsWith(set.prefix)))) {
-  throw new Error('Une question extérieure aux sept lots éditoriaux autorisés a été détectée.')
+  throw new Error('Une question extérieure aux huit lots éditoriaux autorisés a été détectée.')
 }
 if (new Set(completeCatalog.map((question) => question.id)).size !== completeCatalog.length) throw new Error('Des identifiants QCM sont dupliqués.')
 completeCatalog.forEach(validateQuestion)
@@ -152,11 +161,23 @@ if (iejPublished.some((question) => !question.editorialSource?.label?.includes('
 if (iejPublished.some((question) => !question.tags?.includes('fascicule-2026') || !question.explanation?.includes('Fondement juridique'))) {
   throw new Error('Un QCM IEJ ne comporte pas les marqueurs de sourcing attendus.')
 }
+if (prebarreauPublished.some((question) => question.legalAuthorityStatus !== 'source-explicit')) {
+  throw new Error('Un QCM Pré-Barreau 2025 n’est pas rattaché directement à son autorité explicite.')
+}
+if (prebarreauPublished.some((question) => !question.editorialSource?.label?.includes('Pré-Barreau 2025') || !question.editorialSource?.label?.includes('PDF p.'))) {
+  throw new Error('Un QCM Pré-Barreau 2025 ne comporte pas la référence du corrigé et sa page PDF.')
+}
+if (prebarreauPublished.some((question) => !question.tags?.includes('corrige-2025') || !question.tags?.includes('page-verifiee') || !question.explanation?.includes('Fondement juridique') || !question.explanation?.includes('Traçabilité éditoriale'))) {
+  throw new Error('Un QCM Pré-Barreau 2025 ne comporte pas les marqueurs de sourcing attendus.')
+}
+if (new Set(prebarreauPublished.map((question) => question.sourceRecordId)).size !== 150) {
+  throw new Error('Les 300 QCM Pré-Barreau ne couvrent pas exactement 150 registres source.')
+}
 
 const answerAudit = validateAnswerBalance(questions)
 if (Number(meta.caseCount || 0) < 30) throw new Error('Le catalogue des dossiers progressifs est incomplet.')
 
-console.log(`[LexQCM] Socle éditorial validé : ${cleanSocle.length} QCM, dont ${iejPublished.length} nouveaux QCM IEJ Sorbonne 2026.`)
+console.log(`[LexQCM] Socle éditorial validé : ${cleanSocle.length} QCM, dont ${iejPublished.length} QCM IEJ Sorbonne 2026 et ${prebarreauPublished.length} QCM Pré-Barreau 2025 nouvellement sourcés.`)
 console.log(`[LexQCM] Banque active : ${questions.length} QCM juridiquement sourcés (${cleanPublished.length} éditoriaux + ${directPublished.length} issus des dossiers).`)
 console.log(`[LexQCM] Revue juridique : ${legalReview.length} QCM conservés hors entraînement.`)
 expectedSets.forEach((set) => console.log(`[LexQCM] ${set.prefix} — ${set.count} QCM présents.`))
