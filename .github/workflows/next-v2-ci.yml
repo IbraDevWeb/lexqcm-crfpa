@@ -1,0 +1,43 @@
+name: Next V2 CI
+
+on:
+  push:
+    branches: [next-v2]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm install
+      - name: Import editorial question bank
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run import:legacy 2>&1 | tee import.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lexqcm-content-quality
+          path: |
+            import.log
+            public/generated/meta.json
+            public/generated/quality-report.json
+            public/generated/legal-authority-report.json
+            public/generated/questions.json
+            public/generated/questions-legal-review.json
+            public/generated/questions-editorial-review.json
+          if-no-files-found: warn
+      - run: node scripts/validate-import.mjs
+      - run: npm run typecheck
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_example_for_build_only
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000

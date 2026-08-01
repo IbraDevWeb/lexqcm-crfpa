@@ -1,0 +1,137 @@
+{
+  "collection": "Pré-Barreau 2025 — 15 corrigés de procédure civile",
+  "createdAt": "2026-07-29",
+  "subject": "Procédure civile",
+  "sourceDocumentCount": 15,
+  "sourceRecordCount": 150,
+  "generatedQuestionCount": 300,
+  "questionPrefix": "PB25-PC-VISA-",
+  "verificationPolicy": [
+    "Chaque registre est rattaché à une page PDF déterminée.",
+    "Chaque registre comporte au moins un article, un texte numéroté ou une décision datée explicitement mentionné dans le corrigé.",
+    "Les références ambiguës ou seulement déduites ont été exclues.",
+    "Les QCM sont générés à partir de la règle et du visa du même registre source."
+  ],
+  "documents": [
+    {
+      "documentCode": "SUP-01",
+      "title": "Pré-Barreau 2025 — Corrigé de l’épreuve supplémentaire n°1 — Procédure civile",
+      "sourceFile": "Corrigé 1 Sup PC(1).pdf",
+      "pageCount": 4,
+      "sha256": "c9e7045dfe058597249937776109f9b56a3e3f0f252f25ca57d136e38a267d81",
+      "recordCount": 10
+    },
+    {
+      "documentCode": "SUP-02",
+      "title": "Pré-Barreau 2025 — Corrigé de l’épreuve supplémentaire n°2 — Procédure civile",
+      "sourceFile": "Corrigé 2 sup PC(1).pdf",
+      "pageCount": 7,
+      "sha256": "70c799b29998f4ab7cd0caf996a777bea268707b6325beecfce1a4190201beb5",
+      "recordCount": 10
+    },
+    {
+      "documentCode": "SUP-03",
+      "title": "Pré-Barreau 2025 — Corrigé de l’épreuve supplémentaire n°3 — Procédure civile",
+      "sourceFile": "Corrigé 3 Sup PC(1).pdf",
+      "pageCount": 5,
+      "sha256": "83b9ed73a30e8fccad0db922ae95e4307ea37802e72b9d0ddd9ddfbe2373c844",
+      "recordCount": 10
+    },
+    {
+      "documentCode": "SUP-04",
+      "title": "Pré-Barreau 2025 — Corrigé de l’épreuve supplémentaire n°4 — Procédure civile",
+      "sourceFile": "Corrigé 4 Sup PC(1).pdf",
+      "pageCount": 6,
+      "sha256": "09f2aa990650326b21bb36d6155ba026ea27ce48bf7df36891130eb82b3b5897",
+      "recordCount": 10
+    },
+    {
+      "documentCode": "SUP-05",
+      "title": "Pré-Barreau 2025 — Corrigé de l’épreuve supplémentaire n°5 — Procédure civile",
+      "sourceFile": "Corrigé 5 Sup PC(1).pdf",
+      "pageCount": 5,
+      "sha256": "3e0b31d3fa511d2358d26072283dbd88567651863b807a4a242c417bbb5248d1",
+      "recordCount": 10
+    },
+    {
+      "documentCode": "SUP-06",
+      "title": "Pré-Barreau 2025 — Corrigé de l’épreuve supplémentaire n°6 — Procédure civile",
+      "sourceFile": "Corrigé 6 Sup PC(1).pdf",
+      "pageCount": 4,
+      "sha256": "24d499f82c329d257c7b89c39bd479cdd4bdcdfaf2b2ba8b3cf30212f8935c03",
+      "recordCount": 10
+    },
+    {
+      "documentCode": "SUP-07",
+      "title": "Pré-Barreau 2025 — Corrigé de l’épreuve supplémentaire n°7 — Procédure civile",
+      "sourceFile": "Corrigé Sup 7 PC(1).pdf",
+      "pageCount": 6,
+      "sha256": "36529755a1e1e9aa3dd5bbbc1bdb2425efd46ff0541175cffe0f4259dfb88a33",
+      "recordCount": 10
+    },
+    {
+      "documentCode": "EST-01",
+      "title": "Pré-Barreau 2025 — Corrigé de l’épreuve n°1 — Procédure civile",
+      "sourceFile": "Corrigé 1 PC(1).pdf",
+      "pageCount": 5,
+      "sha256": "86ea7bf5a6396186bd74dd86d62fcb120e4eaf8a3420ba6e7a460dcdab2ed67f",
+      "recordCount": 10
+    },
+    {
+      "documentCode": "EST-02",
+      "title": "Pré-Barreau 2025 — Corrigé de l’épreuve n°2 — Procédure civile",
+      "sourceFile": "Corrigé 2 PC(1).pdf",
+      "pageCount": 6,
+      "sha256": "e16ceb39c115af05bf51a354a4bb8f01df66aff30e655169efb0c687dabf4cad",
+      "recordCount": 10
+    },
+    {
+      "documentCode": "EST-03",
+      "title": "Pré-Barreau 2025 — Corrigé de l’épreuve n°3 — Procédure civile",
+      "sourceFile": "Corrigé 3 PC(1).pdf",
+      "pageCount": 5,
+      "sha256": "37665d94c28576df1fca3e6596c11fac74458425424d2e0c4a1c52ad9a620f98",
+      "recordCount": 10
+    },
+    {
+      "documentCode": "EST-04",
+      "title": "Pré-Barreau 2025 — Corrigé de l’épreuve n°4 — Procédure civile",
+      "sourceFile": "Corrigé 4 PC(1).pdf",
+      "pageCount": 5,
+      "sha256": "2e2a9a074a4ad79b29b5e3277437e83a037197a80d73ad251f54dc2a8e56a629",
+      "recordCount": 10
+    },
+    {
+      "documentCode": "EST-05",
+      "title": "Pré-Barreau 2025 — Corrigé de l’épreuve n°5 — Procédure civile",
+      "sourceFile": "Corrigé 5 PC(1).pdf",
+      "pageCount": 7,
+      "sha256": "7307d385cbe3643248fb19fa09cbb8eb367f9b12c26d6dd4af9702310a054ea0",
+      "recordCount": 10
+    },
+    {
+      "documentCode": "EST-06",
+      "title": "Pré-Barreau 2025 — Corrigé de l’épreuve n°6 — Procédure civile",
+      "sourceFile": "Corrigé 6 PC(1).pdf",
+      "pageCount": 7,
+      "sha256": "127454adfe41f5cc431f726a8f786fd0d28e5a086087de9b015ed970663a331e",
+      "recordCount": 10
+    },
+    {
+      "documentCode": "EST-07",
+      "title": "Pré-Barreau 2025 — Corrigé de l’épreuve n°7 — Procédure civile",
+      "sourceFile": "Corrigé 7 PC(1).pdf",
+      "pageCount": 5,
+      "sha256": "babe43241b1866cd44f9bc18c298b8de753a20bed7cc67a9bc2b503b39fbc7d6",
+      "recordCount": 10
+    },
+    {
+      "documentCode": "EST-08",
+      "title": "Pré-Barreau 2025 — Corrigé de l’épreuve n°8 — Procédure civile",
+      "sourceFile": "Corrigé 8 PC(1).pdf",
+      "pageCount": 6,
+      "sha256": "40c64d9748655589b41bc97b1008ff7d7cf9260a7d5971c325a45e4a72597790",
+      "recordCount": 10
+    }
+  ]
+}
