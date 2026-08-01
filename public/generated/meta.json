@@ -1,0 +1,131 @@
+{
+  "generatedAt": "2026-08-01T10:01:37.375Z",
+  "sourceQuestionCount": 1200,
+  "questionCount": 931,
+  "editorialReviewCount": 0,
+  "optionOrderVersion": 3,
+  "answerPositionStats": {
+    "singleAnswerCount": 924,
+    "multipleAnswerCount": 7,
+    "bySubject": {
+      "Procédure civile": {
+        "singleAnswerCount": 542,
+        "multipleAnswerCount": 0,
+        "positions": {
+          "D": 135,
+          "A": 136,
+          "C": 135,
+          "B": 136
+        }
+      },
+      "Droit des obligations": {
+        "singleAnswerCount": 230,
+        "multipleAnswerCount": 4,
+        "positions": {
+          "C": 57,
+          "B": 58,
+          "D": 57,
+          "A": 58
+        }
+      },
+      "Droit social": {
+        "singleAnswerCount": 152,
+        "multipleAnswerCount": 3,
+        "positions": {
+          "D": 38,
+          "A": 38,
+          "C": 38,
+          "B": 38
+        }
+      }
+    }
+  },
+  "procedureCivileCorrectionQuestionCount": 421,
+  "procedureCivile2026QuestionCount": 0,
+  "procedureCivile2025QuestionCount": 1,
+  "obligationsCorrectionQuestionCount": 122,
+  "droitSocialCorrectionQuestionCount": 121,
+  "questionsBySubject": {
+    "Procédure civile": 542,
+    "Droit des obligations": 234,
+    "Droit social": 155
+  },
+  "cleanQuestionBase": true,
+  "questionSources": [
+    "Pré-Barreau 2026 — 12 corrigés de procédure civile",
+    "Pré-Barreau 2025 — 15 corrigés de procédure civile",
+    "Pré-Barreau 2026 — 12 corrigés de droit des obligations",
+    "Pré-Barreau et Objectif Barreau 2026 — 12 corrigés de droit social",
+    "IEJ de la Sorbonne 2026 — Fascicule de révision et d’actualisation — Procédure civile",
+    "IEJ de la Sorbonne 2026 — Fascicule de révision et d’actualisation — Droit des obligations",
+    "IEJ de la Sorbonne 2026 — Fascicule de révision et d’actualisation — Droit social",
+    "Pré-Barreau 2025 — 15 corrigés de procédure civile — banque à visas explicites"
+  ],
+  "caseCount": 42,
+  "correctedCaseCount": 40,
+  "pendingCaseCount": 2,
+  "importedFromLegacy": false,
+  "iejSorbonne2026QuestionCount": 360,
+  "iejSorbonne2026BySubject": {
+    "Procédure civile": 120,
+    "Droit des obligations": 120,
+    "Droit social": 120
+  },
+  "iejSorbonne2026Prefixes": [
+    "IEJ26-PC-",
+    "IEJ26-OB-",
+    "IEJ26-DS-"
+  ],
+  "prebarreauPc2025SourcedQuestionCount": 300,
+  "prebarreauPc2025SourcedPrefix": "PB25-PC-VISA-",
+  "prebarreauPc2025SourceDocumentCount": 15,
+  "legalAuthorityVersion": 1,
+  "legalAuthorityQuestionCount": 869,
+  "legalAuthorityMissingCount": 331,
+  "legalAuthorityCoverageRate": 72.4,
+  "officiallyVerifiedAuthorityCount": 41,
+  "legalAuthorityRefinementVersion": 1,
+  "legalAuthorityConceptVersion": 1,
+  "legalAuthorityConsensusVersion": 1,
+  "directCaseQuestionVersion": 1,
+  "directCaseQuestionCount": 267,
+  "directCaseQuestionsBySubject": {
+    "Droit des obligations": 112,
+    "Droit social": 34,
+    "Procédure civile": 121
+  },
+  "officialLegalOverrideVersion": 1,
+  "officialLegalOverrideCount": 3,
+  "trustedCleanQuestionCount": 664,
+  "legalReviewCount": 536,
+  "legalPublicationPolicy": true,
+  "trustedLegalAuthorityStatuses": [
+    "existing",
+    "source-explicit",
+    "case-exact",
+    "case-direct",
+    "case-direct-official"
+  ],
+  "legalReviewBySubject": {
+    "Procédure civile": 299,
+    "Droit des obligations": 118,
+    "Droit social": 119
+  },
+  "trustedCleanQuestionsBySubject": {
+    "Procédure civile": 421,
+    "Droit des obligations": 122,
+    "Droit social": 121
+  },
+  "iejSorbonneExplicitSourceCount": 360,
+  "prebarreauPc2025ExplicitSourceCount": 300,
+  "multipleAnswerStats": {
+    "count": 7,
+    "patternCount": 4,
+    "patterns": {
+      "4:0-1-2": 2,
+      "4:1-2-3": 2,
+      "4:0-1-3": 2,
+      "4:0-2-3": 1
+    }
+  }
+}
